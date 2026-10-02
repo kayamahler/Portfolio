@@ -26,8 +26,8 @@
 /* ---- Polices (fichiers dans le dossier /fonts) ----
    Pour changer de police : remplace seulement le chemin dans url("...").
    Conseil : évite les espaces dans les noms de fichiers (voir LISEZ-MOI). */
-@font-face { font-family: "Africa"; src: url("fonts/Africa-Drylands copie.otf") format("opentype"); font-display: swap; }
-@font-face { font-family: "Alaska"; src: url("fonts/Alaska-Regular copie.otf") format("opentype"); font-display: swap; }
+@font-face { font-family: "Africa"; src: url("fonts/Africa-Rainfall.woff2") format("opentype"); font-display: swap; }
+@font-face { font-family: "Alaska"; src: url("fonts/Alaska-Regular.woff2") format("opentype"); font-display: swap; }
 
 :root {
   /* ---- Polices ---- */
