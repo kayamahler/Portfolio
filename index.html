@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Projet Kaya</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Curseur personnalisé : rond déplacé par script.js (taille : --cursor-size dans style.css) -->
+<div id="cursor" aria-hidden="true"></div>
+
+<!-- Pop-up iOS : demande l'autorisation du capteur de mouvement (affiché au 1er toucher, iOS seulement) -->
+<div id="gyro-popup" hidden>
+  <p data-i18n="gyroText"></p>
+  <button type="button" id="gyro-allow" data-i18n="gyroAllow"></button>
+  <button type="button" id="gyro-decline" data-i18n="gyroDecline"></button>
+</div>
+
+<!-- « Qui suis-je » : image plein écran (s'ouvre au clic sur un bouton « Qui suis-je »,
+     page 1 OU dernière page). L'image change selon la langue : CONFIG.aboutImages (script.js) -->
+<div id="about" class="about" aria-hidden="true" role="dialog" aria-modal="true">
+  <img id="about-img" alt="">
+  <p id="about-missing" class="about-missing" hidden></p>
+  <button type="button" id="about-close" class="about-close" data-i18n="aboutClose"></button>
+</div>
+
+<!-- ============ MODE PLEIN ÉCRAN (LIGHTBOX) DES CARROUSELS ============
+     S'ouvre au clic sur le carrousel : c'est TOUJOURS l'image/la vidéo
+     actuellement visible qui s'agrandit. Un nouveau clic (n'importe où),
+     la croix ou la touche Échap la referme. Les flèches (ou les touches ← →,
+     ou un glissement) passent à l'image suivante. Rien à modifier ici. -->
+<div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-modal="true">
+  <button type="button" id="lightbox-close" class="lightbox-close" aria-label="Fermer">✕</button>
+  <button type="button" id="lightbox-prev" class="lightbox-arrow prev" aria-label="Précédent">&gt;</button>
+  <button type="button" id="lightbox-next" class="lightbox-arrow next" aria-label="Suivant">&gt;</button>
+  <div id="lightbox-content" class="lightbox-content"></div>
+  <!-- « ? » (police Africa) : tombe du haut de la page. Un clic transforme l'image en fond noir
+       avec le texte du projet (police Alaska, machine à écrire). Un clic sur le texte ou sur « ? » le referme. -->
+  <button type="button" id="lightbox-info-btn" class="lightbox-info-btn" aria-label="Info" aria-expanded="false">?</button>
+  <div id="lightbox-info" class="lightbox-info" role="region" aria-live="polite"><span class="shown"></span><span class="rest"></span></div>
+</div>
+
+<!-- Zone de défilement : chaque <section class="page"> occupe tout l'écran -->
+<main id="scroller">
+
+  <!-- ============ PAGE 1 : ACCUEIL ============ -->
+  <section class="page hero" id="page1">
+    <!-- Image « Qui suis-je » (couleurs inversées), révélée sous les infos par le glitch (CONFIG.aboutImages) -->
+    <img class="hero-bg" id="hero-bg" alt="">
+
+    <!-- Choix de la langue (en haut à droite de la page 1).
+         Pour ajouter une langue : un bouton ici + sa rubrique dans CONFIG.i18n (script.js). -->
+    <nav class="lang" aria-label="Language">
+      <button type="button" data-lang="fr">FR</button><span>|</span><button type="button" data-lang="en">EN</button><span>|</span><button type="button" data-lang="es">ES</button><span>|</span><button type="button" data-lang="it">IT</button>
+    </nav>
+
+    <!-- Le mot « kaya » est dessiné sur ce canvas (script.js, createFallingWord). Un clic sur une lettre ouvre « Qui suis-je ». -->
+    <canvas id="kaya-canvas" role="img" aria-label="Kaya"></canvas>
+
+    <!-- Bas de page : GAUCHE = Ville/Pays · CENTRE = signe ▾ · DROITE = e-mail (cliquable).
+         S'ils ne tiennent pas sur une ligne, ils s'empilent automatiquement à droite.
+         ★ E-mail à modifier UNIQUEMENT dans CONFIG.contactEmail (script.js) : il n'est jamais écrit en clair ici (anti-spam). -->
+    <p class="contact-left" data-i18n="contactCity"></p>
+    <address class="contact-right"><a class="mail" id="contact-email" href="#" aria-label="E-mail"></a></address>
+
+    <!-- Signe ▾ : un clic descend à la page suivante (style.css, section 13). -->
+    <button type="button" class="scroll-cue" id="scroll-cue" aria-label="Défiler vers le bas">▾</button>
+  </section>
+
+  <!-- ============ PAGES PROJETS (à partir de la page 2) ============ -->
+  <!-- Créées automatiquement par script.js (voir sa section 0). Rien à modifier ici. -->
+
+  <!-- ============ DERNIÈRE PAGE : « LET'S TALK » ============
+       • Titre « Let's talk! » centré dans la page
+         (taille : --talk-size / --talk-width dans style.css).
+       • En bas : même disposition que la page 1.
+       L'id "contact" ne doit pas être changé (il sert au script). -->
+  <section class="page footer" id="contact">
+
+    <!-- Titre « Let's talk! » : texte selon la langue (CONFIG.i18n.<langue>.letsTalkTitle).
+         Un clic sur une lettre ouvre l'e-mail. -->
+    <canvas id="talk-canvas" role="img" aria-label="Let's talk"></canvas>
+
+    <p class="contact-left" data-i18n="contactCity"></p>
+    <button type="button" class="about-btn" data-i18n="aboutLabel"></button>
+    <address class="contact-right"><a class="mail" id="footer-email" href="#" aria-label="E-mail"></a></address>
+  </section>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
