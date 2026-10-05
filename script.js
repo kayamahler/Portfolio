@@ -81,7 +81,7 @@ const PROJECT_IMAGES = [
     "images/projet6-1.jpg",
     "images/projet6-2.jpg",
     "images/projet6-3.jpg",
-    "images/projet6-4.jpg",
+    
   ],
 ];
 
