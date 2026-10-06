@@ -18,32 +18,37 @@
   <button type="button" id="gyro-decline" data-i18n="gyroDecline"></button>
 </div>
 
-<!-- « Qui suis-je » : image plein écran (s'ouvre au clic sur un bouton « Qui suis-je »,
-     page 1 OU dernière page). L'image change selon la langue : CONFIG.aboutImages (script.js) -->
+<!-- Petit message après un clic sur l'e-mail : « Adresse copiée · … » (utile si
+     aucune messagerie ne s'ouvre, par ex. sur un ordinateur sans logiciel de mail). -->
+<div id="mail-toast" class="mail-toast" role="status" aria-live="polite"></div>
+
+<!-- « Qui suis-je » : image plein écran (s'ouvre au clic sur une lettre de « kaya »). L'image change selon la langue : CONFIG.aboutImages (script.js) -->
 <div id="about" class="about" aria-hidden="true" role="dialog" aria-modal="true">
   <img id="about-img" alt="">
   <p id="about-missing" class="about-missing" hidden></p>
   <button type="button" id="about-close" class="about-close" data-i18n="aboutClose"></button>
 </div>
 
-<!-- ============ MODE PLEIN ÉCRAN (LIGHTBOX) DES CARROUSELS ============
-     S'ouvre au clic sur le carrousel : c'est TOUJOURS l'image/la vidéo
-     actuellement visible qui s'agrandit. Un nouveau clic (n'importe où),
-     la croix ou la touche Échap la referme. Les flèches (ou les touches ← →,
-     ou un glissement) passent à l'image suivante. Ordinateur et tablette seulement :
-     sur téléphone, les images ne s'agrandissent pas (le « ? » est sur la page). -->
+<!-- ============ IMAGE AGRANDIE (LIGHTBOX) ============
+     S'ouvre au clic sur n'importe quelle image d'un projet (ordinateur, tablette
+     ET téléphone). Un nouveau clic (n'importe où), la croix ou la touche Échap la
+     referme. Les flèches, les touches ← → ou un glissement passent à l'image
+     suivante du même projet. -->
 <div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-modal="true">
   <button type="button" id="lightbox-close" class="lightbox-close" aria-label="Fermer">✕</button>
   <button type="button" id="lightbox-prev" class="lightbox-arrow prev" aria-label="Précédent">&gt;</button>
   <button type="button" id="lightbox-next" class="lightbox-arrow next" aria-label="Suivant">&gt;</button>
   <div id="lightbox-content" class="lightbox-content"></div>
-  <!-- « ? » (police Africa) : tombe du côté droit et reste couché en bas de la page. Un clic transforme l'image en fond noir
-       avec le texte du projet (police Alaska, machine à écrire). Un clic sur le texte ou sur « ? » le referme. -->
-  <button type="button" id="lightbox-info-btn" class="lightbox-info-btn" aria-label="Info" aria-expanded="false">?</button>
-  <div id="lightbox-info" class="lightbox-info" role="region" aria-live="polite"><span class="shown"></span><span class="rest"></span></div>
 </div>
 
-<!-- Zone de défilement : chaque <section class="page"> occupe tout l'écran -->
+<!-- ============ « ? » EN MOUVEMENT ============
+     Le « ? » (police Africa) flotte en bas à droite tant qu'un projet est à l'écran
+     (il penche avec la vitesse du défilement et fait une pirouette à chaque
+     nouveau projet). Un clic mène au texte du projet visible. -->
+<button type="button" id="qmark" class="qmark" aria-label="Info"><span>?</span></button>
+
+<!-- Zone de défilement. Page 1 et dernière page = un écran chacune ;
+     les projets (entre les deux) défilent librement, en douceur. -->
 <main id="scroller">
 
   <!-- ============ PAGE 1 : ACCUEIL ============ -->
@@ -52,43 +57,58 @@
          opacité : --hero-image-opacity dans style.css). -->
     <img class="hero-bg" id="hero-bg" alt="">
 
-    <!-- Choix de la langue (en haut à droite de la page 1).
-         Pour ajouter une langue : un bouton ici + sa rubrique dans CONFIG.i18n (script.js). -->
-    <nav class="lang" aria-label="Language">
-      <button type="button" data-lang="fr">FR</button><span>|</span><button type="button" data-lang="en">EN</button><span>|</span><button type="button" data-lang="es">ES</button><span>|</span><button type="button" data-lang="it">IT</button>
-    </nav>
+    <!-- Barre du haut : choix de la langue (en haut à DROITE).
+         Pour ajouter une langue : un bouton dans .lang + sa rubrique dans CONFIG.i18n (script.js). -->
+    <header class="topbar">
+      <nav class="lang" aria-label="Language">
+        <button type="button" data-lang="fr">FR</button><span>|</span><button type="button" data-lang="en">EN</button><span>|</span><button type="button" data-lang="es">ES</button><span>|</span><button type="button" data-lang="it">IT</button>
+      </nav>
+    </header>
 
     <!-- Le mot « kaya » est dessiné sur ce canvas : mêmes lettres mobiles que « Let's talk »
          (script.js, createInteractiveWord). Un clic sur une lettre ouvre « Qui suis-je ». -->
     <canvas id="kaya-canvas" role="img" aria-label="Kaya"></canvas>
 
-    <!-- Bas de page : GAUCHE = Ville/Pays · CENTRE = « Qui suis-je » · DROITE = e-mail (cliquable).
+    <!-- Bas de page : GAUCHE = Ville/Pays · DROITE = e-mail (cliquable).
          S'ils ne tiennent pas sur une ligne, ils s'empilent automatiquement à droite.
          ★ E-mail à modifier UNIQUEMENT dans CONFIG.contactEmail (script.js) : il n'est jamais écrit en clair ici (anti-spam). -->
     <p class="contact-left" data-i18n="contactCity"></p>
-    <button type="button" class="about-btn" data-i18n="aboutLabel"></button>
     <address class="contact-right"><a class="mail" id="contact-email" href="#" aria-label="E-mail"></a></address>
 
-    <!-- Signe ▾ (juste au-dessus de « Qui suis-je ») : un clic descend à la page suivante (style.css, section 13). -->
+    <!-- Signe ▾ (en bas au centre) : un clic descend à la page « Qui suis-je » (style.css, section 13). -->
     <button type="button" class="scroll-cue" id="scroll-cue" aria-label="Défiler vers le bas">▾</button>
   </section>
 
-  <!-- ============ PAGES PROJETS (à partir de la page 2) ============ -->
-  <!-- Créées automatiquement par script.js (voir sa section 0). Rien à modifier ici. -->
+  <!-- ============ PAGE 2 : « QUI SUIS-JE » ============
+       L'image « Qui suis-je » de la langue en cours (CONFIG.aboutImages), entière,
+       en couleurs INVERSÉES (fond noir ; réglage : --about-invert dans style.css). Elle se pose en douceur pendant qu'on fait défiler.
+       L'id "about-page" ne doit pas être changé (il sert au script). -->
+  <section class="page about-page" id="about-page" aria-label="Qui suis-je">
+    <img class="about-page-img" id="about-page-img" alt="" hidden>
+  </section>
+
+  <!-- ============ PROJETS (à partir de la page 3) ============ -->
+  <!-- Créés automatiquement par script.js (voir sa section 0). Rien à modifier ici.
+       En faisant défiler, les images de chaque projet arrivent de côté ; après la
+       dernière image, le texte du projet entre et ses mots s'allument un à un. -->
 
   <!-- ============ DERNIÈRE PAGE : « LET'S TALK » ============
-       • Titre « Let's talk! » centré dans la page
-         (taille : --talk-size / --talk-width dans style.css).
-       • En bas : même disposition que la page 1.
+       • Fond noir.
+       • « Let's talk! » au CENTRE de la page (lettres mobiles) ; un clic ou un
+         toucher dessus ouvre la messagerie (e-mail).
+       • En bas : ville (gauche) et e-mail (droite), comme sur la page 1.
        L'id "contact" ne doit pas être changé (il sert au script). -->
   <section class="page footer" id="contact">
 
-    <!-- Titre « Let's talk! » : texte selon la langue (CONFIG.i18n.<langue>.letsTalkTitle).
-         Un clic sur une lettre ouvre l'e-mail. -->
+    <!-- Les lettres de « Let's talk! » sont dessinées sur ce canvas (elles peuvent bouger
+         sur toute la page) ; leur place de repos est le cadre .talk-link ci-dessous. -->
     <canvas id="talk-canvas" role="img" aria-label="Let's talk"></canvas>
 
+    <!-- Zone cliquable de « Let's talk! », au centre = lien e-mail
+         (taille : --talk-w / --talk-h dans style.css). -->
+    <a class="talk-link mail" id="talk-link" href="#" aria-label="Let's talk — e-mail"></a>
+
     <p class="contact-left" data-i18n="contactCity"></p>
-    <button type="button" class="about-btn" data-i18n="aboutLabel"></button>
     <address class="contact-right"><a class="mail" id="footer-email" href="#" aria-label="E-mail"></a></address>
   </section>
 

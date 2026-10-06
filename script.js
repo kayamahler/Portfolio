@@ -7,30 +7,29 @@
    • Sections 2 à 7 : le « moteur » du site. Chaque bloc commence par un
      commentaire qui explique ce qu'il fait. Pas besoin d'y toucher pour
      changer le contenu.
-   • Les tailles et positions à l'écran (taille de « kaya », du titre
-     « Let's talk »…) se règlent dans style.css,
+   • Les tailles et positions à l'écran se règlent dans style.css,
      section 1 : le script les lit directement là-bas.
 
    PLAN
-     0. ★ IMAGES / VIDÉOS DES PAGES PROJETS   (PROJECT_IMAGES)
+     0. ★ IMAGES / VIDÉOS DES PROJETS          (PROJECT_IMAGES)
      1. ★ RÉGLAGES ET TEXTES FR / EN / ES / IT (CONFIG)
-     2. OUTILS                                 chargement des images, couleur de contraste
+     2. OUTILS                                 typographie, chargement des images
      3. MOTS INTERACTIFS                       « kaya » et « Let's talk »
-     4. PAGES PROJETS                          carrousels, flèches, texte, agrandissement
+     4. PROJETS                                défilement fluide, galeries, « ? », image agrandie
      5. « QUI SUIS-JE »
-     6. PAGE 1 & DERNIÈRE PAGE                 image d'accueil, e-mail, bas de page
+     6. PAGE 1 & DERNIÈRE PAGE                 e-mail, bas de page
      7. CURSEUR, LANGUE, iOS, DÉMARRAGE
    ===================================================================== */
 "use strict";
 
-
 /* =====================================================================
-   0. ★ IMAGES / VIDÉOS DES PAGES PROJETS
+   0. ★ IMAGES / VIDÉOS DES PROJETS
    ---------------------------------------------------------------------
-   • Chaque bloc [ ... ] = UNE page projet (le 1er bloc = page 2, etc.).
-   • "images/nom.jpg"             = une image du carrousel.
-   • { video: "images/nom.mp4" }  = une vidéo : elle est jouée en entier
-                                    avant de passer à l'élément suivant.
+   • Chaque bloc [ ... ] = UN projet (le 1er bloc = projet 01, etc.).
+     Toutes ses images sont affichées ensemble, entières, dans l'ordre.
+   • "images/nom.jpg"             = une image.
+   • { video: "images/nom.mp4" }  = une vidéo (en boucle, sans son ;
+                                    avec le son dans l'image agrandie).
    • Ajouter une page : copie un bloc entier, colle-le à la suite, puis
      ajoute son titre et son texte dans CONFIG.i18n.fr/en/es.projects,
      à la même position (3e bloc = 3e texte).
@@ -42,7 +41,7 @@ const PROJECT_IMAGES = [
   // ---- Projet 1 (page 2) ----
   [
     "images/projet1-1.webp",
-    { video: "images/projet1-video.mp4" }, // ★ chemin réel de la vidéo (2e élément du carrousel)
+    { video: "images/projet1-video.mp4" }, // ★ chemin réel de la vidéo (2e élément)
     "images/projet1-2.webp",
   ],
   // ---- Projet 2 (page 3) ----
@@ -99,17 +98,29 @@ const CONFIG = {
   // ---- Langue affichée à la première visite : "fr", "en", "es" ou "it" ----
   defaultLang: "fr",
 
-  // ---- Vitesses (en millisecondes : 1000 ms = 1 seconde) ----
-  typeSpeed: 14,                 // texte des projets (« ? ») : machine à écrire rapide, délai entre deux lettres
-  slideInterval: 2000,           // carrousels : durée d'affichage d'une image
-  slideIntervalAfterClick: 4000, // … après un clic sur une flèche
-  videoFallbackDuration: 25000,  // sécurité : si une vidéo ne signale pas sa fin, on passe à la suite
+  // ---- Projets en défilement horizontal ----
+  horizontal: {
+    textHold: 1.1,  // temps de lecture du texte, bande immobile (en hauteurs d'écran à faire défiler) :
+                    // plus grand = les mots s'allument plus lentement et le texte reste plus longtemps
+  },
 
-  // ---- Couleur de contraste (texte des projets + flèches) ----
-  // Le site mesure la luminosité de l'image SOUS le texte et SOUS chaque flèche.
-  contrastColors: { onLight: "#000", onDark: "#fff" }, // fond clair → noir, fond sombre → blanc
-  contrastThreshold: 0.55,       // de 0 à 1 : au-dessus, le fond est considéré comme clair
-  contrastRefresh: 400,          // fréquence de la mesure (suit aussi les vidéos)
+  // ---- Défilement fluide (ordinateur : souris et trackpad) ----
+  smoothScroll: {
+    lerp: 0.085,          // douceur : 0.05 = très glissant, 0.2 = plus direct
+    wheelMultiplier: 1,   // distance parcourue par cran de molette (1 = normale)
+    magnet: true,         // page 1 et dernière page se calent toutes seules
+    magnetDelay: 160,     // attente (ms) après le dernier mouvement avant de caler
+    magnetThreshold: 0.12,// dès 12 % de page parcourue, on finit le mouvement
+    magnetLerp: 0.07,     // douceur du calage
+  },
+
+  // ---- « ? » en mouvement (projets) ----
+  questionMark: {
+    float: 8,          // amplitude du flottement (px)
+    sway: 9,           // balancement permanent (degrés)
+    scrollTilt: 0.35,  // inclinaison selon la vitesse du défilement
+    maxTilt: 40,       // inclinaison maximale (degrés)
+  },
 
   // ---- Mouvement des lettres (« kaya » et « Let's talk ») ----
   letterPhysics: {
@@ -149,6 +160,7 @@ const CONFIG = {
       aboutClose: "Fermer",
       contactCity: "Lausanne, Suisse",
       letsTalkTitle: "Let's talk!", // titre de la dernière page
+      mailCopied: "Adresse copiée", // petit message après un clic sur l'e-mail
       // Un { title, text } par page projet, dans le même ordre que PROJECT_IMAGES.
       projects: [
         { title: "AGENDA ERACOM",
@@ -173,6 +185,7 @@ const CONFIG = {
       aboutClose: "Close",
       contactCity: "Lausanne, Switzerland",
       letsTalkTitle: "Let's talk!",
+      mailCopied: "Address copied",
       projects: [
         { title: "ERACOM AGENDA",
           text: "Project carried out as part of my studies\nERACOM Agenda 2026-2027\n\nDesigned in collaboration with Gabriel Perreira.\nLayout: Gabriel Perreira.\nPhotography: Kaya Mahler.\n\nThe brief was to create a functional and engaging planner for ERACOM students. Our ambition was to make an object that brings together the school's departments, highlighting the materials and the students at the heart of the action. The project is built around a series of 50 photographs that punctuate the year while telling a story: the life within the school. We wanted to shine a light on what goes on behind the scenes of the different programmes." },
@@ -196,6 +209,7 @@ const CONFIG = {
       aboutClose: "Cerrar",
       contactCity: "Lausana, Suiza",
       letsTalkTitle: "¡Hablemos!",
+      mailCopied: "Dirección copiada",
       projects: [
         { title: "AGENDA ERACOM",
           text: "Proyecto realizado en un contexto escolar\nAgenda de la ERACOM 2026-2027\n\nDiseño realizado en colaboración con Gabriel Perreira.\nMaquetación: Gabriel Perreira.\nFotografía: Kaya Mahler.\n\nEl encargo consistía en crear una agenda funcional e interesante para los alumnos de la ERACOM. Nuestra ambición fue crear un objeto que reuniera las distintas especialidades de la escuela, poniendo en valor la materia y a los alumnos en el centro de la acción. El proyecto se articula en torno a una serie de 50 fotografías que marcan el ritmo del año contando una historia: la de la vida dentro del centro. Quisimos dar a conocer los entresijos de las diferentes formaciones." },
@@ -219,6 +233,7 @@ const CONFIG = {
       aboutClose: "Chiudi",
       contactCity: "Losanna, Svizzera",
       letsTalkTitle: "Parliamo!",
+      mailCopied: "Indirizzo copiato",
       projects: [
         { title: "AGENDA ERACOM",
           text: "Progetto realizzato in ambito scolastico\nAgenda dell'ERACOM 2026-2027\n\nIdeazione realizzata in collaborazione con Gabriel Perreira.\nImpaginazione: Gabriel Perreira.\nFotografia: Kaya Mahler.\n\nL'incarico richiedeva di creare un'agenda funzionale e interessante per gli studenti dell'ERACOM. La nostra ambizione è stata creare un oggetto che riunisse i diversi indirizzi della scuola, mettendo in risalto la materia e gli studenti al centro dell'azione. Il progetto si articola attorno a una serie di 50 fotografie che scandiscono l'anno raccontando una storia, quella della vita all'interno dell'istituto. Volevamo mettere in luce il dietro le quinte delle diverse formazioni." },
@@ -274,11 +289,6 @@ function watchSize(element, callback) {
   else window.addEventListener("resize", callback);
 }
 
-// Téléphone ? (même condition que la section 15 de style.css)
-// Sur téléphone, les images ne s'agrandissent pas et le « ? » reste sur la page.
-const PHONE_QUERY = window.matchMedia("(max-width: 700px), (max-height: 500px) and (pointer: coarse)");
-const isPhone = () => PHONE_QUERY.matches;
-
 /* ---- Microtypographie ---------------------------------------------------
    Appliquée automatiquement à TOUS les textes affichés (boutons, ville,
    textes des projets) : tu peux donc écrire normalement dans CONFIG.
@@ -318,75 +328,72 @@ function typo(text, lang = currentLang) {
   return t;
 }
 
-/* ---- Texte explicatif d'un projet (bloc noir, texte blanc) --------------
-   Utilisé dans l'image agrandie (ordinateur, tablette) ET sur la page projet
-   (téléphone). Le bloc recouvre exactement l'image ; le texte s'écrit en
-   machine à écrire, à la plus grande taille qui tient dans le cadre. La
-   place de tout le texte est réservée dès le début : les lignes (et donc le
-   drapeau, le bord droit irrégulier) ne bougent jamais pendant l'écriture.
-   ---------------------------------------------------------------------- */
-function createInfoText(info) {
-  const shown = info.querySelector(".shown");
-  const rest = info.querySelector(".rest");
-  let token = {};
-
-  // box = { left, top, width, height } en px, dans le repère du parent du bloc.
-  function place(box) {
-    info.style.left = box.left + "px"; info.style.top = box.top + "px";
-    info.style.width = box.width + "px"; info.style.height = box.height + "px";
-    let lo = 9, hi = Math.min(box.height * 0.5, 150);
-    while (hi - lo > 0.5) {
-      const mid = (lo + hi) / 2;
-      info.style.fontSize = mid + "px";
-      if (info.scrollHeight <= info.clientHeight + 1 && info.scrollWidth <= info.clientWidth + 1) lo = mid; else hi = mid;
-    }
-    info.style.fontSize = Math.floor(lo * 2) / 2 + "px"; // demi-pixel : rendu net
-  }
-  function type(fullText) {
-    const mine = {};
-    token = mine;
-    const perTick = Math.max(1, Math.ceil(fullText.length / 260)); // les longs textes restent rapides
-    let i = 0;
-    (function tick() {
-      if (token !== mine) return;
-      i = Math.min(fullText.length, i + perTick);
-      shown.textContent = fullText.slice(0, i);
-      rest.textContent = fullText.slice(i);
-      if (i < fullText.length) setTimeout(tick, CONFIG.typeSpeed);
-    })();
-  }
-  return {
-    open(entry, box) {
-      const fullText = typo((entry.title ? entry.title + "\n\n" : "") + entry.text);
-      info.lang = currentLang; // césure dans la bonne langue
-      shown.textContent = "";
-      rest.textContent = fullText;
-      info.classList.add("open");
-      place(box);
-      type(fullText);
-    },
-    close() { token = {}; info.classList.remove("open"); },
-    place,
-    isOpen: () => info.classList.contains("open"),
-  };
-}
-
 /* ---- Chargement fiable des images -------------------------------------
    Avant d'afficher une image, on vérifie qu'elle existe. Si non, on
    essaie la même image avec d'autres extensions (.jpg, .webp…). Le
-   résultat est mémorisé pour ne jamais tester deux fois le même chemin.
+   résultat (adresse + largeur + hauteur) est mémorisé pour ne jamais
+   tester deux fois le même chemin.
    ---------------------------------------------------------------------- */
-// E-mail assemblé à la demande (jamais écrit en clair dans la page).
+/* ---- E-mail ----------------------------------------------------------------
+   L'adresse est assemblée à la demande (jamais écrite en clair dans la page).
+   Ouverture fiable sur ordinateur, téléphone et tablette :
+   • les liens e-mail sont de vrais liens <a href="mailto:…"> : l'adresse est
+     posée dans le lien au moment même du clic / du toucher, et c'est le
+     navigateur qui ouvre la messagerie (méthode la plus compatible, iOS et
+     Android compris, y compris dans les navigateurs d'Instagram, etc.) ;
+   • les lettres de « Let's talk » (canvas) cliquent un lien de ce type ;
+   • en plus, l'adresse est copiée et affichée quelques secondes en bas de
+     l'écran : utile sur un ordinateur sans logiciel de messagerie.
+   ---------------------------------------------------------------------- */
 const mailAddress = () => CONFIG.contactEmail.user + String.fromCharCode(64) + CONFIG.contactEmail.domain;
-const openMail = () => { window.location.href = "mailto:" + mailAddress(); };
+const mailHref = () => "mailto:" + mailAddress();
+
+let mailToastTimer = null;
+function showMailToast() {
+  const toast = $("mail-toast");
+  if (!toast) return;
+  const address = mailAddress();
+  const show = (copied) => {
+    const label = (CONFIG.i18n[currentLang] && CONFIG.i18n[currentLang].mailCopied) || "";
+    toast.textContent = copied && label ? label + " · " + address : address;
+    toast.classList.add("show");
+    clearTimeout(mailToastTimer);
+    mailToastTimer = setTimeout(() => toast.classList.remove("show"), 4500);
+  };
+  try {
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(address).then(() => show(true), () => show(false));
+    else show(false);
+  } catch (e) { show(false); }
+}
+
+// Ouvre la messagerie depuis du code (lettres de « Let's talk ») : on « clique » un vrai lien.
+function openMail() {
+  const link = document.createElement("a");
+  link.href = mailHref();
+  link.rel = "noopener";
+  link.style.display = "none";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  showMailToast();
+}
+
+// Transforme un lien <a> en lien e-mail fiable (href posé au dernier moment, anti-spam).
+function armMailLink(link) {
+  if (!link) return;
+  const arm = () => { link.href = mailHref(); };
+  ["pointerdown", "pointerenter", "touchstart", "focus", "contextmenu"].forEach((type) => link.addEventListener(type, arm, { passive: true }));
+  link.addEventListener("click", () => { arm(); showMailToast(); }); // pas de preventDefault : le navigateur suit le lien mailto:
+}
 
 const imageCache = new Map();
 
+// Renvoie { url, w, h } si l'image existe, sinon null.
 function probeImage(url) {
   return new Promise((resolve) => {
     const test = new Image();
-    test.onload = () => resolve(true);
-    test.onerror = () => resolve(false);
+    test.onload = () => resolve({ url, w: test.naturalWidth, h: test.naturalHeight });
+    test.onerror = () => resolve(null);
     test.src = url;
   });
 }
@@ -398,7 +405,8 @@ function resolveImage(path) {
   const candidates = [...new Set([path, ...CONFIG.imageExtensions.map((ext) => base + "." + ext)])];
   const search = (async () => {
     for (const url of candidates) {
-      if (await probeImage(url)) return url;
+      const found = await probeImage(url);
+      if (found) return found;
     }
     console.warn("[Kaya] image introuvable :", path);
     return null;
@@ -409,66 +417,8 @@ function resolveImage(path) {
 
 async function setImage(imgElement, path) {
   if (!imgElement) return;
-  const url = await resolveImage(path);
-  if (url) imgElement.src = url;
-}
-
-/* ---- Couleur de contraste ----------------------------------------------
-   Mesure la luminosité moyenne (0 = noir, 1 = blanc) de la partie de
-   l'image/vidéo visible située SOUS un élément (flèche, texte), en tenant
-   compte du recadrage « object-fit: cover ». Renvoie null si impossible.
-   ---------------------------------------------------------------------- */
-const contrastCanvas = document.createElement("canvas");
-contrastCanvas.width = contrastCanvas.height = 16; // 16×16 px suffisent pour une moyenne
-const contrastCtx = contrastCanvas.getContext("2d", { willReadFrequently: true });
-let contrastBlocked = false; // devient true si le navigateur interdit de lire les pixels
-
-function sampleLuminance(media, box, rect) {
-  if (contrastBlocked || !media || !rect.width || !rect.height) return null;
-  const isVideo = media.tagName === "VIDEO";
-  const iw = isVideo ? media.videoWidth : media.naturalWidth;
-  const ih = isVideo ? media.videoHeight : media.naturalHeight;
-  if (!iw || !ih || (isVideo && media.readyState < 2)) return null;
-
-  // Où se trouve "rect" dans l'image d'origine ?
-  // Ordinateur : image en « cover » (remplit le cadre) ; téléphone : « contain »
-  // (image entière dans un carré noir) : on suit le réglage réel de style.css.
-  const b = box.getBoundingClientRect();
-  if (!b.width || !b.height) return null;
-  const contain = getComputedStyle(media).objectFit === "contain";
-  const scale = contain ? Math.min(b.width / iw, b.height / ih) : Math.max(b.width / iw, b.height / ih);
-  const offX = (b.width - iw * scale) / 2;
-  const offY = (b.height - ih * scale) / 2;
-  const sx = Math.max(0, (rect.left - b.left - offX) / scale);
-  const sy = Math.max(0, (rect.top - b.top - offY) / scale);
-  const ex = Math.min(iw, (rect.right - b.left - offX) / scale);
-  const ey = Math.min(ih, (rect.bottom - b.top - offY) / scale);
-  // Élément surtout en dehors de l'image (bande noire autour du carré) : fond sombre.
-  const covered = (Math.max(0, ex - sx) * Math.max(0, ey - sy) * scale * scale) / (rect.width * rect.height);
-  if (covered < 0.5) return 0;
-  if (ex - sx < 1 || ey - sy < 1) return null;
-
-  const S = contrastCanvas.width;
-  try {
-    contrastCtx.clearRect(0, 0, S, S);
-    contrastCtx.drawImage(media, sx, sy, ex - sx, ey - sy, 0, 0, S, S);
-    const d = contrastCtx.getImageData(0, 0, S, S).data;
-    const bgLum = 0.067; // fond #111 visible à travers les parties transparentes
-    let sum = 0;
-    for (let i = 0; i < d.length; i += 4) {
-      const lum = (0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2]) / 255;
-      const a = d[i + 3] / 255;
-      sum += lum * a + bgLum * (1 - a);
-    }
-    return sum / (d.length / 4);
-  } catch (e) {
-    // Arrive quand le site est ouvert en double-cliquant sur index.html
-    // (file://) dans Chrome : on bascule sur les couleurs inversées (CSS).
-    contrastBlocked = true;
-    console.warn("[Kaya] Analyse des couleurs impossible ici (site ouvert en file:// ?). Couleurs inversées utilisées à la place.");
-    document.querySelectorAll(".project").forEach((s) => s.classList.add("contrast-fallback"));
-    return null;
-  }
+  const found = await resolveImage(path);
+  if (found) imgElement.src = found.url;
 }
 
 
@@ -499,6 +449,9 @@ function createInteractiveWord(options) {
     sizeVar, defaultSize = 0.28,   // hauteur max des lettres (fraction de la hauteur de page)
     widthVar, defaultWidth = 0.5,  // largeur max du mot (fraction de la largeur de page)
     measureGlyphs = false,
+    anchor = null,                 // élément-cadre : le mot s'y pose, centré en hauteur
+                                   // (taille max = largeur et hauteur du cadre). Sinon : mot centré dans la page.
+    anchorAlign = "left",          // "left" = aligné à gauche du cadre, "center" = centré dans le cadre
     trackingVar,                   // interlettrage (mode measureGlyphs)
     gapVar, lastGapVar, spacingVar,
     onLetterClick,
@@ -536,12 +489,22 @@ function createInteractiveWord(options) {
     };
   }
 
-  // Taille des lettres : la plus grande qui respecte --…-size ET --…-width.
-  function computeFontSize(chars) {
+  // Cadre de repos (option anchor), dans le repère de la page ; null = toute la page.
+  function anchorBox() {
+    if (!anchor) return null;
+    const a = anchor.getBoundingClientRect(), p = page.getBoundingClientRect();
+    if (!a.width || !a.height) return null;
+    return { left: a.left - p.left, top: a.top - p.top, w: a.width, h: a.height };
+  }
+
+  // Taille des lettres : la plus grande qui tient dans le cadre
+  // (ou qui respecte --…-size ET --…-width quand il n'y a pas de cadre).
+  function computeFontSize(chars, box) {
     if (measureGlyphs) {
       ctx.font = fontAt(100);
       const natural = chars.reduce((sum, c) => sum + ctx.measureText(c).width, 0)
                     + settings.tracking * 100 * (chars.length - 1);
+      if (box) return Math.min((100 * box.w) / Math.max(natural, 1), box.h);
       return Math.min((100 * W * settings.width) / Math.max(natural, 1), H * settings.size);
     }
     const n = Math.max(chars.length, 1);
@@ -551,8 +514,9 @@ function createInteractiveWord(options) {
   // Calcule la place « de repos » de chaque lettre.
   function layoutLetters() {
     const chars = getChars();
-    fontSize = computeFontSize(chars);
-    const homeY = H / 2; // le mot est centré verticalement dans sa page
+    const box = anchorBox();
+    fontSize = computeFontSize(chars, box);
+    const homeY = box ? box.top + box.h / 2 : H / 2; // dans le cadre, ou au milieu de la page
 
     let widths = null;
     if (measureGlyphs) {
@@ -567,7 +531,13 @@ function createInteractiveWord(options) {
       const gap = i === chars.length - 2 ? settings.lastGap : settings.baseGap;
       return radiusOf(i) + radiusOf(i + 1) + tracking + gap + settings.extra;
     });
-    let x = W / 2 - pairDistances.reduce((a, b) => a + b, 0) / 2;
+    const span = pairDistances.reduce((a, b) => a + b, 0);
+    const wordW = span + radiusOf(0) + radiusOf(chars.length - 1);
+    let x = box
+      ? (anchorAlign === "center"
+          ? box.left + (box.w - wordW) / 2 + radiusOf(0)          // centré dans le cadre
+          : box.left + radiusOf(0))                               // aligné à gauche du cadre
+      : W / 2 - span / 2;                                         // centré dans la page
 
     letters = chars.map((char, i) => {
       const old = letters[i] && letters[i].char === char ? letters[i] : null; // garde le mouvement en cours
@@ -753,6 +723,7 @@ function createInteractiveWord(options) {
   }
 
   watchSize(page, resize);
+  if (anchor) watchSize(anchor, resize); // le cadre change de taille avec l'écran
   watchVisibility(page, (visible) => { onScreen = visible; updateRunning(); });
   resize();
 
@@ -764,248 +735,496 @@ function createInteractiveWord(options) {
 }
 
 
+
 /* =====================================================================
-   4. PAGES PROJETS
+   4. PROJETS : DÉFILEMENT FLUIDE, GALERIES, « ? », IMAGE AGRANDIE
    ---------------------------------------------------------------------
-   Une page est créée pour chaque bloc de PROJECT_IMAGES. Elle contient :
-   le carrousel, les deux flèches et, si besoin, la liste des images
-   introuvables. Le texte du projet s'ouvre dans l'image agrandie (« ? »).
+   • Défilement fluide (initSmoothScroll) : sur ordinateur, la molette et
+     le trackpad ne font plus « sauter » la page : le site glisse vers la
+     position voulue avec de l'inertie (réglages : CONFIG.smoothScroll).
+     Les projets défilent librement ; la page 1 et la dernière page se
+     calent toutes seules quand on s'en approche.
+   • Ordre : page 1 → page « Qui suis-je » (image) → projets → dernière page.
+   • Projets (initProjects + initScrollFx) : en faisant défiler vers le bas,
+     les images du projet arrivent de côté (bande horizontale, comme sur
+     hugeinc.com) ; après la dernière image, le texte entre et ses mots
+     s'allument un à un (CONFIG.horizontal).
+     Clic sur une image = image agrandie (tous les écrans).
+   • « ? » (initQuestionMark) : flotte en bas à droite tant qu'un projet
+     est à l'écran ; un clic mène au texte de ce projet.
    ===================================================================== */
 
-let openInfoRefresh = () => {};  // remplacée par initLightbox() : réécrit le texte du « ? » après un changement de langue
-let openLightbox = () => {};     // (éléments, position, quandOnChange, n° du projet)
 let lightboxOpen = false;        // true tant que l'image agrandie est ouverte
-let activeCarousel = null;       // le carrousel de la page actuellement à l'écran (touches ← →)
+let openLightbox = () => {};     // (éléments, position, n° du projet) — remplacée par initLightbox()
+let closeLightbox = () => {};    // remplacée par initLightbox()
+let activeProject = -1;          // projet au milieu de l'écran (-1 = page 1 ou dernière page)
+let questionMark = null;         // le « ? » (initQuestionMark)
+let smooth = null;               // le défilement fluide (initSmoothScroll)
+const projectSections = [];
 
-/* ---- Carrousel d'une page -------------------------------------------
-   items = [{ kind: "image" | "video", url }]
-   • défilement automatique uniquement quand la page est à l'écran ;
-   • une vidéo repart du début à chaque fois que la page redevient visible
-     (sinon elle pouvait finir hors écran et bloquer le carrousel) ;
-   • clic = agrandit l'élément VISIBLE ;
-   • couleur de contraste des flèches et du texte.
-   Renvoie { updateContrast } ou null si la page est vide.
+const projectEntry = (i) => (CONFIG.i18n[currentLang].projects || [])[i] || null;
+const isAboutOpen = () => { const a = $("about"); return !!(a && a.classList.contains("open")); };
+
+/* ---- Défilement fluide ----------------------------------------------------
+   Ordinateur (souris / trackpad) : chaque cran de molette déplace une
+   « cible » ; la page glisse vers elle en douceur (interpolation à chaque
+   image, indépendante de la fréquence de l'écran).
+   Téléphone / tablette : défilement natif du navigateur (déjà fluide au
+   doigt), avec un léger calage de la page 1 et de la dernière page (CSS).
    ---------------------------------------------------------------------- */
-function buildCarousel(section, items, projectIndex) {
-  const slidesBox = section.querySelector(".slides");
-  const prevBtn = section.querySelector(".carousel-arrow.prev");
-  const nextBtn = section.querySelector(".carousel-arrow.next");
-  if (!items.length) return null;
+function initSmoothScroll() {
+  const scroller = $("scroller");
+  const hero = $("page1");
+  const footer = document.querySelector(".footer");
+  const S = CONFIG.smoothScroll;
+  const fine = window.matchMedia("(hover: hover) and (pointer: fine)");
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-  const slides = items.map((item) => {
-    let el;
-    if (item.kind === "video") {
-      el = document.createElement("video");
-      el.src = item.url;
-      el.muted = true;       // obligatoire pour la lecture automatique
-      el.playsInline = true; // iOS : pas de plein écran forcé
-      el.preload = "metadata";
-    } else {
-      el = document.createElement("img");
-      el.src = item.url;
-      el.decoding = "async";
-      el.alt = "";
-    }
-    slidesBox.appendChild(el);
-    return el;
-  });
+  let enabled = false;
+  let target = 0, current = 0, ease = S.lerp;
+  let rafId = null, lastTime = 0;
+  let direction = 1, magnetTimer = null;
 
-  let current = 0;
-  let visible = false;
-  let autoTimer = null;
-  let videoEnd = null;       // écoute de la fin de la vidéo en cours
-  let contrastTimer = null;
+  const maxScroll = () => Math.max(0, scroller.scrollHeight - scroller.clientHeight);
+  const clamp = (v) => Math.max(0, Math.min(maxScroll(), v));
 
-  /* -- Couleur de contraste -- */
-  function updateContrast() {
-    const media = slides[current];
-    [prevBtn, nextBtn].forEach((el) => {
-      if (!el || el.hidden) return;
-      // On mesure sous le SYMBOLE de la flèche (pas sous toute sa zone de clic, plus large).
-      const range = document.createRange();
-      range.selectNodeContents(el);
-      const lum = sampleLuminance(media, slidesBox, range.getBoundingClientRect());
-      if (lum === null) return;
-      el.style.setProperty("--auto-color",
-        lum > CONFIG.contrastThreshold ? CONFIG.contrastColors.onLight : CONFIG.contrastColors.onDark);
-    });
-  }
-  function startContrastWatch() {
-    clearInterval(contrastTimer);
-    updateContrast();
-    contrastTimer = setInterval(updateContrast, CONFIG.contrastRefresh);
-  }
-  function stopContrastWatch() { clearInterval(contrastTimer); contrastTimer = null; }
-
-  /* -- Passage automatique à l'élément suivant -- */
-  function clearAutoAdvance() {
-    clearTimeout(autoTimer);
-    autoTimer = null;
-    if (videoEnd) {
-      videoEnd.el.removeEventListener("ended", videoEnd.fn);
-      clearTimeout(videoEnd.safety);
-      videoEnd = null;
-    }
-  }
-  function scheduleAdvance(delay) {
-    clearAutoAdvance();
-    if (!visible || slides.length < 2) return;
-    const el = slides[current];
-    if (el.tagName === "VIDEO") {
-      const safety = setTimeout(autoNext, CONFIG.videoFallbackDuration);
-      const fn = () => { clearTimeout(safety); autoNext(); };
-      el.addEventListener("ended", fn, { once: true });
-      videoEnd = { el, fn, safety };
-    } else {
-      autoTimer = setTimeout(autoNext, delay);
-    }
+  function stop() { if (rafId) cancelAnimationFrame(rafId); rafId = null; lastTime = 0; }
+  function setEnabled() {
+    enabled = fine.matches && !reduce.matches;
+    document.documentElement.classList.toggle("smooth-scroll", enabled);
+    stop();
+    target = current = scroller.scrollTop;
   }
 
-  function next() { show((current + 1) % slides.length, CONFIG.slideInterval); }
-  function prev() { show((current - 1 + slides.length) % slides.length, CONFIG.slideIntervalAfterClick); }
-  // Navigation manuelle (clavier, trackpad, glissement) : -1 = précédent, +1 = suivant.
-  function go(step) {
-    if (slides.length < 2) return;
-    show((current + step + slides.length) % slides.length, CONFIG.slideIntervalAfterClick);
+  function frame(now) {
+    const dt = lastTime ? Math.min(64, now - lastTime) : 16.7;
+    lastTime = now;
+    const k = 1 - Math.pow(1 - ease, dt / 16.7); // même douceur à 60 Hz et à 120 Hz
+    current += (target - current) * k;
+    if (Math.abs(target - current) < 0.4) current = target;
+    scroller.scrollTop = current;
+    if (current !== target) rafId = requestAnimationFrame(frame);
+    else { rafId = null; lastTime = 0; }
   }
-  // Défilement automatique : on attend tant que l'image agrandie est ouverte.
-  function autoNext() {
-    if (lightboxOpen) { clearAutoAdvance(); autoTimer = setTimeout(autoNext, 500); return; }
-    next();
+  function run() { if (!rafId) rafId = requestAnimationFrame(frame); }
+
+  // Va à la position y (en px depuis le haut du site), en douceur.
+  function scrollTo(y, opts = {}) {
+    const top = clamp(y);
+    if (!enabled) { scroller.scrollTo({ top, behavior: reduce.matches ? "auto" : "smooth" }); return; }
+    if (!rafId) target = current = scroller.scrollTop;
+    direction = top >= current ? 1 : -1;
+    ease = opts.ease || S.lerp;
+    target = top;
+    run();
   }
 
-  // Affiche l'élément n° n ; "delayAfter" = durée avant le suivant.
-  function show(n, delayAfter) {
-    current = n;
-    slides.forEach((el, k) => {
-      const isCurrent = k === n;
-      el.classList.toggle("on", isCurrent);
-      if (el.tagName === "VIDEO") {
-        if (isCurrent && visible) { el.currentTime = 0; el.play().catch(() => {}); }
-        else el.pause();
+  /* -- Calage de la page 1 et de la dernière page (ordinateur) --
+     Quand on s'arrête alors que la page 1 (ou la dernière page) est à
+     moitié visible, le site finit le mouvement dans le sens où l'on allait. */
+  function scheduleMagnet() {
+    if (!S.magnet) return;
+    clearTimeout(magnetTimer);
+    magnetTimer = setTimeout(magnet, S.magnetDelay);
+  }
+  function magnet() {
+    if (!enabled || lightboxOpen || isAboutOpen()) return;
+    const H = scroller.clientHeight;
+    const y = target;
+    // Chaque page plein écran (page 1, « Qui suis-je », dernière page) a deux zones :
+    // en train d'arriver (au-dessus d'elle) et en train de partir (en dessous).
+    for (const page of document.querySelectorAll("#scroller > .page")) {
+      const top = page.offsetTop;
+      const zones = [[top - H, top], [top, top + H]];
+      for (const [a, b] of zones) {
+        if (a < 0 || b > maxScroll() + 1) continue;
+        if (y > a + 1 && y < b - 1) {
+          const f = (y - a) / (b - a);
+          const goDown = direction > 0 ? f > S.magnetThreshold : f > 1 - S.magnetThreshold;
+          scrollTo(goDown ? b : a, { ease: S.magnetLerp });
+          return;
+        }
       }
-    });
-    const el = slides[n];
-    if (el.tagName === "IMG" && !el.complete) el.addEventListener("load", updateContrast, { once: true });
-    else if (el.tagName === "VIDEO" && el.readyState < 2) el.addEventListener("loadeddata", updateContrast, { once: true });
-    updateContrast();
-    scheduleAdvance(delayAfter);
+    }
   }
 
-  show(0, CONFIG.slideInterval);
+  /* -- Molette / trackpad -- */
+  scroller.addEventListener("wheel", (e) => {
+    if (!enabled || e.ctrlKey) return;                         // ctrl + molette = zoom du navigateur
+    e.preventDefault();
+    // Geste horizontal du trackpad : il fait avancer le site comme un geste vertical
+    // (pratique dans les projets, qui défilent de côté).
+    let d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    if (e.deltaMode === 1) d *= 40;                            // molette « par lignes » (Firefox)
+    else if (e.deltaMode === 2) d *= scroller.clientHeight;    // « par pages »
+    if (!rafId) target = current = scroller.scrollTop;
+    target = clamp(target + d * S.wheelMultiplier);
+    if (d) direction = d > 0 ? 1 : -1;
+    ease = S.lerp;
+    run();
+    scheduleMagnet();
+  }, { passive: false });
 
-  if (slides.length < 2) {
-    if (prevBtn) prevBtn.hidden = true;
-    if (nextBtn) nextBtn.hidden = true;
-  } else {
-    if (nextBtn) nextBtn.addEventListener("click", (e) => { e.stopPropagation(); show((current + 1) % slides.length, CONFIG.slideIntervalAfterClick); });
-    if (prevBtn) prevBtn.addEventListener("click", (e) => { e.stopPropagation(); prev(); });
-  }
-
-  // Clic sur le carrousel : agrandit l'élément actuellement visible
-  // (ordinateur et tablette seulement ; sur téléphone, rien ne s'agrandit).
-  slidesBox.addEventListener("click", () => {
-    if (isPhone()) return;
-    openLightbox(slides, current, (i) => show(i, CONFIG.slideIntervalAfterClick), projectIndex);
+  /* -- Clavier : ↑ ↓, Page préc./suiv., Espace, Début, Fin -- */
+  document.addEventListener("keydown", (e) => {
+    if (!enabled || lightboxOpen || isAboutOpen() || e.defaultPrevented) return;
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    const tag = e.target && e.target.tagName;
+    if ((e.key === " " || e.key === "Enter") && (tag === "BUTTON" || tag === "A" || tag === "FIGURE")) return;
+    const H = scroller.clientHeight;
+    const base = rafId ? target : scroller.scrollTop;
+    let y = null;
+    switch (e.key) {
+      case "ArrowDown": y = base + 120; break;
+      case "ArrowUp": y = base - 120; break;
+      case "PageDown": y = base + H * 0.9; break;
+      case "PageUp": y = base - H * 0.9; break;
+      case " ": y = base + (e.shiftKey ? -1 : 1) * H * 0.9; break;
+      case "Home": y = 0; break;
+      case "End": y = maxScroll(); break;
+      default: return;
+    }
+    e.preventDefault();
+    scrollTo(y);
+    scheduleMagnet();
   });
 
-  // Trackpad (glisser à droite / à gauche) et glissement du doigt : image suivante / précédente.
-  onHorizontalGesture(section, (dir) => { if (!lightboxOpen) go(dir); });
+  // Défilement fait par quelqu'un d'autre (barre, clavier natif, ancre…) : on se recale.
+  scroller.addEventListener("scroll", () => { if (!rafId) target = current = scroller.scrollTop; }, { passive: true });
 
-  const api = { updateContrast, go };
+  fine.addEventListener("change", setEnabled);
+  reduce.addEventListener("change", setEnabled);
+  setEnabled();
 
-  // Page à l'écran : on (re)lance ; hors écran : tout est mis en pause.
-  watchVisibility(section, (isVisible) => {
-    visible = isVisible;
-    if (visible) activeCarousel = api;
-    else if (activeCarousel === api) activeCarousel = null;
-    if (visible) { show(current, CONFIG.slideInterval); startContrastWatch(); }
-    else {
-      clearAutoAdvance();
-      stopContrastWatch();
-      slides.forEach((el) => { if (el.tagName === "VIDEO") el.pause(); });
-    }
-  }, 0.5);
-
-  return api;
+  return { scrollTo, scrollToElement: (el) => { if (el) scrollTo(el.offsetTop); } };
 }
 
+/* ---- Projets en défilement horizontal (inspiré de hugeinc.com) -------------
+   Chaque projet est une longue section. Pendant qu'on la traverse en faisant
+   défiler normalement (molette, trackpad, doigt), un cadre plein écran reste
+   fixe et la bande du projet glisse de DROITE à GAUCHE :
+       [ n° + titre ]  [ image 1 ]  [ image 2 ]  …  [ dernière image ]  [ texte ]
+   Les images arrivent de côté, entières. Quand la dernière image est passée,
+   le texte entre à son tour et ses mots s'allument un à un au fil du
+   défilement ; la bande reste alors immobile le temps de lire
+   (CONFIG.horizontal.textHold), puis le projet suivant arrive.
+   Tout suit la position du défilement : en remontant, tout repart en arrière.
+   ---------------------------------------------------------------------- */
+const REDUCE_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)");
+const fx = { projects: [], schedule: () => {} };
+const clamp01 = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+
+function initScrollFx() {
+  const scroller = $("scroller");
+  if (!scroller) return;
+  let raf = null;
+
+  // Mesure une bande : longueur du glissement et hauteur de la section.
+  function measure(pr) {
+    const vw = scroller.clientWidth, vh = scroller.clientHeight;
+    pr.distance = Math.max(0, pr.track.scrollWidth - vw);       // glissement horizontal total (px)
+    pr.hold = vh * CONFIG.horizontal.textHold;                  // temps de lecture, bande immobile
+    pr.textStart = Math.max(0, pr.text.offsetLeft - vw * 0.75); // le texte commence à s'allumer
+    pr.section.style.height = (vh + pr.distance + pr.hold) + "px";
+    pr.measured = true;
+  }
+  fx.measure = (pr) => { measure(pr); schedule(); };
+
+  function update() {
+    raf = null;
+    const vw = scroller.clientWidth, vh = scroller.clientHeight;
+    const scrollerTop = scroller.getBoundingClientRect().top;
+
+    // Page « Qui suis-je » : l'image se pose en douceur pendant qu'elle arrive.
+    const about = $("about-page");
+    if (about) {
+      const r = about.getBoundingClientRect();
+      const ap = REDUCE_MOTION.matches ? 1 : clamp01(1 - (r.top - scrollerTop) / vh);
+      about.style.setProperty("--ap", ap.toFixed(4));
+    }
+
+    fx.projects.forEach((pr) => {
+      if (!pr.measured) measure(pr);
+      const r = pr.section.getBoundingClientRect();
+      if (r.bottom < scrollerTop - 10 || r.top > scrollerTop + vh + 10) return; // hors écran
+      const scrolled = scrollerTop - r.top; // px parcourus dans la section
+      const x = Math.max(0, Math.min(pr.distance, scrolled));
+      if (pr.x !== x) { pr.x = x; pr.track.style.transform = `translate3d(${-x.toFixed(1)}px, 0, 0)`; }
+
+      // Barre de progression du projet (en bas).
+      const total = pr.distance + pr.hold;
+      pr.section.style.setProperty("--progress", total ? clamp01(scrolled / total).toFixed(4) : "1");
+
+      // Images : elles grandissent un peu en arrivant de la droite.
+      if (!REDUCE_MOTION.matches) {
+        pr.figures.forEach((fig) => {
+          const left = fig.offsetLeft - x;
+          const p = clamp01((vw - left) / (vw * 0.55));
+          if (fig._p !== p) { fig._p = p; fig.style.setProperty("--p", p.toFixed(4)); }
+        });
+      }
+
+      // Texte : les mots s'allument entre son entrée et la fin du temps de lecture.
+      const span = Math.max(1, pr.distance + pr.hold * 0.8 - pr.textStart);
+      const tp = REDUCE_MOTION.matches ? 1 : clamp01((scrolled - pr.textStart) / span);
+      pr.section.style.setProperty("--tp", tp.toFixed(4));
+      const n = pr.words.length;
+      const lit = tp >= 1 ? n : Math.floor(tp * (n + 3));
+      if (lit !== pr.lit) {
+        const from = Math.min(lit, pr.lit), to = Math.max(lit, pr.lit);
+        for (let i = from; i < to && i < n; i++) pr.words[i].classList.toggle("lit", i < lit);
+        pr.lit = lit;
+      }
+    });
+  }
+
+  function schedule() { if (!raf) raf = requestAnimationFrame(update); }
+  fx.schedule = schedule;
+  scroller.addEventListener("scroll", schedule, { passive: true });
+  watchSize(scroller, () => { fx.projects.forEach(measure); schedule(); });
+  REDUCE_MOTION.addEventListener("change", schedule);
+  schedule();
+}
+
+// Écrit le titre et le texte d'un projet, le texte découpé en mots (les espaces
+// insécables de la microtypographie restent dans le mot).
+function fillProjectText(pr) {
+  const e = projectEntry(pr.index);
+  const title = e ? typo(e.title) : "";
+  pr.section.querySelectorAll(".js-title").forEach((el) => { el.textContent = title; });
+  const desc = pr.desc;
+  desc.lang = currentLang; // césure dans la bonne langue
+  desc.textContent = "";
+  pr.words = [];
+  (e ? typo(e.text) : "").split(/([ \n]+)/).forEach((part) => {
+    if (!part) return;
+    if (/^[ \n]+$/.test(part)) { desc.appendChild(document.createTextNode(part)); return; }
+    const w = document.createElement("span");
+    w.className = "w";
+    w.textContent = part;
+    desc.appendChild(w);
+    pr.words.push(w);
+  });
+  pr.lit = 0;
+  pr.measured = false; // la largeur du texte peut changer avec la langue
+  fx.schedule();
+}
+
+/* ---- Création des projets ------------------------------------------------ */
 function initProjects() {
   const footer = document.querySelector(".footer");
+  const total = String(PROJECT_IMAGES.length).padStart(2, "0");
 
   PROJECT_IMAGES.forEach((entries, index) => {
-    // 1) Créer la page, juste avant la dernière page.
+    const num = String(index + 1).padStart(2, "0");
     const section = document.createElement("section");
-    section.className = "page project";
+    section.className = "project";
     section.id = "projet-" + (index + 1);
+    section.dataset.project = String(index);
     section.innerHTML =
-      '<div class="slides"></div>' +
-      '<button type="button" class="carousel-arrow prev" aria-label="Précédent">&gt;</button>' +
-      '<button type="button" class="carousel-arrow next" aria-label="Suivant">&gt;</button>' +
-      // « ? » et texte du projet sur la page : téléphone seulement (style.css, section 15).
-      '<button type="button" class="project-info-btn" aria-label="Info" aria-expanded="false">?</button>' +
-      '<div class="project-info" role="region" aria-live="polite"><span class="shown"></span><span class="rest"></span></div>' +
-      '<p class="notice" hidden></p>';
+      '<div class="project-pin">' +
+        '<div class="project-track">' +
+          '<header class="project-intro">' +
+            '<p class="project-num"></p>' +
+            '<h2 class="project-title js-title"></h2>' +
+          '</header>' +
+          '<div class="project-slides"></div>' +
+          '<article class="project-text">' +
+            '<p class="project-num"></p>' +
+            '<h3 class="project-text-title js-title"></h3>' +
+            '<div class="project-rule" aria-hidden="true"></div>' +
+            '<p class="project-desc"></p>' +
+          '</article>' +
+        '</div>' +
+        '<div class="project-progress" aria-hidden="true"></div>' +
+        '<p class="notice" hidden></p>' +
+      '</div>';
+    section.querySelectorAll(".project-num").forEach((el) => { el.textContent = num + " / " + total; });
     footer.before(section);
+    projectSections.push(section);
 
-    const notice = section.querySelector(".notice");
-    initProjectInfo(section, index);
+    const pr = {
+      index, section,
+      track: section.querySelector(".project-track"),
+      text: section.querySelector(".project-text"),
+      desc: section.querySelector(".project-desc"),
+      figures: [], words: [], lit: 0, x: null, measured: false,
+    };
+    fx.projects.push(pr);
 
-    // 2) Vérifier les images, puis construire le carrousel.
+    // Vérifier les images (et lire leurs proportions), puis construire la bande.
     Promise.all(entries.map(async (entry) => {
       if (entry && typeof entry === "object" && entry.video) {
         return { path: entry.video, kind: "video", url: entry.video };
       }
-      return { path: entry, kind: "image", url: await resolveImage(entry) };
+      const found = await resolveImage(entry);
+      return found ? { path: entry, kind: "image", url: found.url, w: found.w, h: found.h }
+                   : { path: entry, kind: "image", url: null };
     })).then((results) => {
-      buildCarousel(section, results.filter((r) => r.url).map((r) => ({ kind: r.kind, url: r.url })), index);
+      buildGallery(pr, results.filter((r) => r.url));
       const missing = results.filter((r) => !r.url).map((r) => r.path);
+      const notice = section.querySelector(".notice");
       if (CONFIG.showMissingImages && missing.length) {
         notice.textContent = "Éléments introuvables (projet " + (index + 1) + ") :\n" + missing.join("\n");
         notice.hidden = false;
       }
+      fx.measure(pr);
     });
+  });
+  refreshProjectTitles();
+}
 
+// Titres et textes des projets dans la langue en cours.
+function refreshProjectTitles() { fx.projects.forEach(fillProjectText); }
+
+/* ---- Images d'un projet ----------------------------------------------------
+   items = [{ kind: "image" | "video", url, w, h }]
+   Chaque élément est posé dans un cadre (<figure>, position relative) qui a
+   les proportions de l'image (--r = largeur / hauteur) : l'image y est
+   toujours entière (object-fit: contain). Hauteur des images : --slide-h.
+   Les vidéos tournent en boucle, sans son, seulement quand elles sont à l'écran.
+   ---------------------------------------------------------------------- */
+function buildGallery(pr, items) {
+  const strip = pr.section.querySelector(".project-slides");
+  const media = [];
+
+  items.forEach((item, k) => {
+    const fig = document.createElement("figure");
+    fig.className = "project-item";
+    fig.style.setProperty("--p", "1");
+    fig.tabIndex = 0;
+    fig.setAttribute("role", "button");
+    fig.setAttribute("aria-label", (k + 1) + " / " + items.length);
+
+    let el;
+    if (item.kind === "video") {
+      el = document.createElement("video");
+      el.muted = true; el.setAttribute("muted", "");
+      el.loop = true;
+      el.playsInline = true; el.setAttribute("playsinline", "");
+      el.preload = "metadata";
+      el.src = item.url;
+      fig.style.setProperty("--r", String(16 / 9)); // en attendant les vraies proportions
+      el.addEventListener("loadedmetadata", () => {
+        if (el.videoWidth && el.videoHeight) fig.style.setProperty("--r", String(el.videoWidth / el.videoHeight));
+        fx.measure(pr); // la bande a changé de longueur
+      });
+      watchVisibility(fig, (visible) => { if (visible) el.play().catch(() => {}); else el.pause(); }, 0.2);
+    } else {
+      el = document.createElement("img");
+      el.decoding = "async";
+      el.alt = "";
+      el.src = item.url;
+      fig.style.setProperty("--r", String(item.w && item.h ? item.w / item.h : 1));
+    }
+    fig.appendChild(el);
+    media.push(el);
+
+    const open = () => openLightbox(media, k, pr.index);
+    fig.addEventListener("click", open);
+    fig.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); }
+    });
+    strip.appendChild(fig);
+    pr.figures.push(fig);
   });
 }
 
-/* ---- « ? » sur la page projet (téléphone) ---------------------------------
-   Toujours visible en haut à gauche. Un toucher : l'image devient un bloc
-   noir avec le texte du projet ; un toucher sur le texte ou sur « ? » le
-   referme. Sur ordinateur et tablette, ce « ? » est caché (il est dans
-   l'image agrandie).
-   ---------------------------------------------------------------------- */
-const projectInfoRefreshers = []; // réécrit les textes ouverts après un changement de langue
-
-function initProjectInfo(section, projectIndex) {
-  const btn = section.querySelector(".project-info-btn");
-  const info = section.querySelector(".project-info");
-  const slidesBox = section.querySelector(".slides");
-  if (!btn || !info || !slidesBox) return;
-  const panel = createInfoText(info);
-  const entry = () => (CONFIG.i18n[currentLang].projects || [])[projectIndex] || null;
-
-  // Cadre du texte = le carré de l'image, dans le repère de la page.
-  const box = () => {
-    const s = section.getBoundingClientRect(), r = slidesBox.getBoundingClientRect();
-    return { left: r.left - s.left, top: r.top - s.top, width: r.width, height: r.height };
-  };
-  const open = () => { const e = entry(); if (!e) return; panel.open(e, box()); btn.setAttribute("aria-expanded", "true"); };
-  const close = () => { panel.close(); btn.setAttribute("aria-expanded", "false"); };
-
-  btn.hidden = !entry();
-  btn.addEventListener("click", (e) => { e.stopPropagation(); if (panel.isOpen()) close(); else open(); });
-  info.addEventListener("click", (e) => { e.stopPropagation(); close(); });
-  watchSize(section, () => { if (panel.isOpen()) { if (isPhone()) panel.place(box()); else close(); } });
-  watchVisibility(section, (visible) => { if (!visible) close(); }); // on referme en quittant la page
-  projectInfoRefreshers.push(() => { btn.hidden = !entry(); if (panel.isOpen()) open(); });
+/* ---- Quel projet est au milieu de l'écran ? ----------------------------- */
+function initActiveProject() {
+  const scroller = $("scroller");
+  if (!("IntersectionObserver" in window) || !scroller) return;
+  const watched = [$("page1"), $("about-page"), ...projectSections, document.querySelector(".footer")].filter(Boolean);
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((en) => {
+      if (!en.isIntersecting) return;
+      const i = en.target.dataset.project != null ? Number(en.target.dataset.project) : -1;
+      setActiveProject(i);
+    });
+  }, { root: scroller, rootMargin: "-49.5% 0px -49.5% 0px", threshold: 0 }); // une fine ligne au milieu de l'écran
+  watched.forEach((el) => io.observe(el));
 }
 
-/* ---- Geste horizontal (trackpad ou doigt) ------------------------------
-   Appelle callback(+1) pour « suivant » (glisser vers la gauche / le
-   trackpad vers la droite) et callback(-1) pour « précédent ». Un seul
-   changement par geste, même si le trackpad continue sur son élan.
-   Les gestes verticaux ne sont pas touchés : la page défile normalement.
+function setActiveProject(i) {
+  if (i === activeProject) return;
+  activeProject = i;
+  if (questionMark && !lightboxOpen) questionMark.setProject(i);
+}
+
+/* ---- « ? » en mouvement ---------------------------------------------------
+   • Visible seulement quand un projet est à l'écran (ou dans l'image agrandie).
+   • Il flotte en permanence, penche selon la vitesse du défilement et fait
+     une pirouette à chaque nouveau projet (CONFIG.questionMark).
+   • Clic : le site glisse jusqu'au texte du projet visible (après sa
+     dernière image) ; dans l'image agrandie, elle se ferme d'abord.
+   ---------------------------------------------------------------------- */
+function initQuestionMark() {
+  const btn = $("qmark");
+  const scroller = $("scroller");
+  if (!btn || !scroller) return null;
+  const glyph = btn.querySelector("span");
+
+  let project = -1;
+
+  function kick() {
+    if (REDUCE_MOTION.matches) return;
+    glyph.classList.remove("kick");
+    void glyph.offsetWidth;
+    glyph.classList.add("kick");
+  }
+
+  /* -- Flottement permanent + inclinaison selon la vitesse de défilement -- */
+  let rafId = null, lastTop = 0, tilt = 0;
+  function loop(now) {
+    const Q = CONFIG.questionMark;
+    const t = now / 1000;
+    const top = scroller.scrollTop;
+    const v = top - lastTop; // px parcourus depuis l'image précédente
+    lastTop = top;
+    const wanted = Math.max(-Q.maxTilt, Math.min(Q.maxTilt, v * Q.scrollTilt));
+    tilt += (wanted - tilt) * 0.12;
+    const x = Math.sin(t * 1.1) * Q.float * 0.6;
+    const y = Math.sin(t * 1.7) * Q.float - Math.abs(tilt) * 0.25;
+    const r = Math.sin(t * 0.9) * Q.sway + tilt;
+    btn.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px) rotate(${r.toFixed(2)}deg)`;
+    rafId = requestAnimationFrame(loop);
+  }
+  function setMoving(on) {
+    if (REDUCE_MOTION.matches) return;
+    if (on && !rafId) { lastTop = scroller.scrollTop; rafId = requestAnimationFrame(loop); }
+    if (!on && rafId) { cancelAnimationFrame(rafId); rafId = null; }
+  }
+
+  function setProject(i) {
+    const changed = i !== project;
+    project = i;
+    const has = i >= 0 && !!projectEntry(i);
+    btn.classList.toggle("visible", has);
+    setMoving(has);
+    if (has && changed) kick();
+  }
+
+  // Va au texte du projet : la bande est arrivée au bout, le texte est entré.
+  function goToText() {
+    const pr = fx.projects[project];
+    if (!pr) return;
+    if (lightboxOpen) closeLightbox();
+    const y = pr.section.offsetTop + pr.distance + pr.hold * 0.85; // texte entièrement allumé
+    if (smooth) smooth.scrollTo(y); else scroller.scrollTo({ top: y, behavior: "smooth" });
+    kick();
+  }
+
+  btn.addEventListener("click", (e) => { e.stopPropagation(); goToText(); });
+
+  return {
+    setProject,
+    kick,
+    refresh() { btn.classList.toggle("visible", project >= 0 && !!projectEntry(project)); },
+  };
+}
+
+/* ---- Geste horizontal (trackpad ou doigt), pour l'image agrandie ----------
+   callback(+1) = suivant, callback(-1) = précédent. Un seul changement par geste.
    ---------------------------------------------------------------------- */
 function onHorizontalGesture(element, callback) {
   let locked = false, timer = null;
@@ -1031,120 +1250,78 @@ function onHorizontalGesture(element, callback) {
   }, { passive: true });
 }
 
-/* ---- Touches ← → : image précédente / suivante du carrousel affiché ---- */
-function initCarouselKeys() {
-  document.addEventListener("keydown", (e) => {
-    if (lightboxOpen || !activeCarousel) return;
-    const about = $("about");
-    if (about && about.classList.contains("open")) return;
-    if (e.key === "ArrowRight") { e.preventDefault(); activeCarousel.go(1); }
-    else if (e.key === "ArrowLeft") { e.preventDefault(); activeCarousel.go(-1); }
-  });
-}
-
-/* ---- Image agrandie (lightbox), commune à tous les carrousels ----
-   Ouverture : clic sur le carrousel. Fermeture : nouveau clic n'importe
-   où, la croix ou la touche Échap. Image suivante / précédente : flèches
-   (mêmes symboles que le carrousel), touches ← →, trackpad ou glissement. */
+/* ---- Image agrandie (lightbox), commune à tous les projets ----------------
+   Ouverture : clic sur une image. Fermeture : nouveau clic n'importe où, la
+   croix ou Échap. Suivante / précédente : flèches, touches ← →, trackpad ou
+   glissement du doigt. Le « ? » reste visible : un clic ferme l'image et
+   ramène au texte du projet.
+   ---------------------------------------------------------------------- */
 function initLightbox() {
   const overlay = $("lightbox");
   const content = $("lightbox-content");
   const closeBtn = $("lightbox-close");
   const prevBtn = $("lightbox-prev");
   const nextBtn = $("lightbox-next");
-  const infoBtn = $("lightbox-info-btn");
-  const info = $("lightbox-info");
-  if (!overlay || !content || !infoBtn || !info) return null;
-  const panel = createInfoText(info);
+  if (!overlay || !content) return null;
 
-  let list = [], index = 0, onChange = null, projectIndex = -1;
-  const infoIsOpen = () => panel.isOpen();
-  const entry = () => (CONFIG.i18n[currentLang].projects || [])[projectIndex] || null;
-  // Cadre du texte = l'image affichée (le calque est fixé à l'écran : coordonnées de la fenêtre).
-  const mediaBox = () => {
-    const r = content.firstElementChild.getBoundingClientRect();
-    return { left: r.left, top: r.top, width: r.width, height: r.height };
-  };
-
-  /* -- Texte du projet : l'image devient un bloc noir, texte blanc (createInfoText). -- */
-  function openInfo() {
-    const e = entry();
-    if (!e || !content.firstElementChild) return;
-    panel.open(e, mediaBox());
-    infoBtn.setAttribute("aria-expanded", "true");
-  }
-  function closeInfo() {
-    panel.close();
-    infoBtn.setAttribute("aria-expanded", "false");
-  }
+  let list = [], index = 0;
 
   function render() {
-    closeInfo();
     content.innerHTML = ""; // arrête aussi une vidéo en cours
     const source = list[index];
     if (!source) return;
     const clone = source.cloneNode(true);
-    clone.classList.remove("on");
     clone.removeAttribute("style");
     if (clone.tagName === "VIDEO") {
       clone.muted = false; // le son est autorisé ici, car l'ouverture vient d'un clic
       clone.loop = true;
-      clone.play().catch(() => {});
+      clone.play().catch(() => { clone.muted = true; clone.play().catch(() => {}); });
     }
     content.appendChild(clone);
     const several = list.length > 1;
     if (prevBtn) prevBtn.hidden = !several;
     if (nextBtn) nextBtn.hidden = !several;
-    infoBtn.hidden = !entry();
   }
 
   function go(step) {
     if (list.length < 2) return;
     index = (index + step + list.length) % list.length;
     render();
-    if (onChange) onChange(index); // le carrousel suit
   }
 
   function close() {
-    closeInfo();
     overlay.classList.remove("open");
     overlay.setAttribute("aria-hidden", "true");
     content.innerHTML = "";
     lightboxOpen = false;
-    list = []; onChange = null; projectIndex = -1;
+    list = [];
+    if (questionMark) questionMark.setProject(activeProject);
   }
 
-  // elements = images/vidéos du carrousel · start = position · change = appelée quand on change d'image
-  function open(elements, start, change, project) {
+  // elements = images/vidéos du projet · start = position · project = n° du projet
+  function open(elements, start, project) {
     if (!elements || !elements.length) return;
-    list = elements; index = start || 0; onChange = change || null; projectIndex = project;
+    list = elements; index = start || 0;
     render();
     overlay.classList.add("open");
     overlay.setAttribute("aria-hidden", "false");
     lightboxOpen = true;
-    infoBtn.classList.remove("drop"); // le « ? » tombe du haut de la page
-    void infoBtn.offsetWidth;
-    infoBtn.classList.add("drop");
+    if (questionMark) { questionMark.setProject(project); questionMark.kick(); }
   }
 
   overlay.addEventListener("click", close);
-  closeBtn.addEventListener("click", (e) => { e.stopPropagation(); close(); });
+  if (closeBtn) closeBtn.addEventListener("click", (e) => { e.stopPropagation(); close(); });
   if (prevBtn) prevBtn.addEventListener("click", (e) => { e.stopPropagation(); go(-1); });
   if (nextBtn) nextBtn.addEventListener("click", (e) => { e.stopPropagation(); go(1); });
-  infoBtn.addEventListener("click", (e) => { e.stopPropagation(); if (infoIsOpen()) closeInfo(); else openInfo(); });
-  info.addEventListener("click", (e) => { e.stopPropagation(); closeInfo(); });
   onHorizontalGesture(overlay, go);
   document.addEventListener("keydown", (e) => {
     if (!overlay.classList.contains("open")) return;
-    if (e.key === "Escape") { if (infoIsOpen()) closeInfo(); else close(); }
+    if (e.key === "Escape") close();
     else if (e.key === "ArrowRight") { e.preventDefault(); go(1); }
     else if (e.key === "ArrowLeft") { e.preventDefault(); go(-1); }
   });
-  window.addEventListener("resize", () => { if (lightboxOpen && infoIsOpen() && content.firstElementChild) panel.place(mediaBox()); });
-  // Passage en format téléphone (rotation, fenêtre réduite) : l'image agrandie se ferme.
-  PHONE_QUERY.addEventListener("change", () => { if (isPhone() && lightboxOpen) close(); });
 
-  openInfoRefresh = () => { if (lightboxOpen && infoIsOpen()) openInfo(); }; // changement de langue
+  closeLightbox = close;
   return open;
 }
 
@@ -1152,8 +1329,9 @@ function initLightbox() {
 /* =====================================================================
    5. « QUI SUIS-JE »
    ---------------------------------------------------------------------
-   Deux boutons (page 1 et dernière page). Au clic, l'image de la langue
-   en cours s'affiche en plein écran (CONFIG.aboutImages).
+   L'image « Qui suis-je » de la langue en cours (CONFIG.aboutImages) est
+   affichée sur la page 2 ; un clic sur une lettre de « kaya » l'ouvre
+   aussi en plein écran.
    ===================================================================== */
 let refreshAboutImage = () => {};
 let openAboutFromWord = () => {};
@@ -1163,16 +1341,21 @@ function initAbout() {
   const image = $("about-img");
   const missing = $("about-missing");
   const closeButton = $("about-close");
-  const openButtons = document.querySelectorAll(".about-btn");
-  if (!overlay || !openButtons.length) return;
+  if (!overlay) return;
 
   let lastOpener = null;
   let requestId = 0; // évite qu'une réponse lente remplace une plus récente
   refreshAboutImage = async () => {
     const thisRequest = ++requestId;
     const wanted = CONFIG.aboutImages[currentLang];
-    const url = await resolveImage(wanted);
+    const found = await resolveImage(wanted);
+    const url = found && found.url;
     if (thisRequest !== requestId) return;
+    const aboutPageImg = $("about-page-img"); // page « Qui suis-je » (après la page 1)
+    if (aboutPageImg) {
+      if (url) { aboutPageImg.src = url; aboutPageImg.hidden = false; }
+      else { aboutPageImg.removeAttribute("src"); aboutPageImg.hidden = true; }
+    }
     if (url) {
       image.src = url;
       image.hidden = false;
@@ -1198,8 +1381,7 @@ function initAbout() {
     if (lastOpener && lastOpener.focus) lastOpener.focus({ preventScroll: true });
   }
 
-  openButtons.forEach((btn) => btn.addEventListener("click", open));
-  // Clic sur le mot « kaya » (page 1) : même image que le bouton « Qui suis-je ».
+  // Clic sur le mot « kaya » (page 1) : l'image « Qui suis-je » en plein écran.
   openAboutFromWord = () => open({ currentTarget: document.activeElement && document.activeElement !== document.body ? document.activeElement : null });
   overlay.addEventListener("click", close);
   closeButton.addEventListener("click", (e) => { e.stopPropagation(); close(); });
@@ -1220,8 +1402,8 @@ function initFixedImages() {
 /* ---- E-mail à l'épreuve des robots ------------------------------------
    Rien n'est écrit en clair dans index.html : le script assemble l'adresse
    à partir de CONFIG.contactEmail. Le « @ » affiché vient du CSS, et le
-   lien mailto: n'est créé qu'au survol, au toucher ou au clic.
-   Le clic ouvre la messagerie par défaut (ordinateur, téléphone, tablette).
+   lien mailto: n'est posé qu'au survol, au toucher ou au clic (armMailLink,
+   section 2). Le clic ouvre la messagerie par défaut sur tous les appareils.
    ---------------------------------------------------------------------- */
 function applyContactEmail() {
   [$("contact-email"), $("footer-email")].forEach((link) => {
@@ -1234,39 +1416,32 @@ function applyContactEmail() {
     at.setAttribute("aria-hidden", "true");
     domain.textContent = CONFIG.contactEmail.domain;
     link.append(user, at, domain);
-    const arm = () => { link.href = "mailto:" + mailAddress(); }; // clic droit, appui long…
-    ["pointerenter", "touchstart", "focus"].forEach((type) => link.addEventListener(type, arm, { passive: true }));
-    link.addEventListener("click", (e) => { e.preventDefault(); openMail(); });
+    armMailLink(link);
   });
+  armMailLink($("talk-link")); // « Let's talk » en haut à gauche de la dernière page
 }
 
 /* ---- Bas de page : une ligne, ou empilé à droite ? --------------------
-   Sur la page 1 et la dernière page, on vérifie si ville (gauche),
-   « Qui suis-je » (centre) et e-mail (droite) tiennent sur UNE ligne sans
-   se toucher. Sinon, la classe .contact-stacked est ajoutée à la page et
-   le CSS les empile à droite (voir style.css, section 4).
+   Sur la page 1 et la dernière page, on vérifie si la ville (gauche) et
+   l'e-mail (droite) tiennent sur UNE ligne sans se toucher. Sinon, la
+   classe .contact-stacked est ajoutée à la page et le CSS les empile à
+   droite (voir style.css, section 4).
    Revérifié à chaque changement de taille d'écran, de langue ou de police.
    ---------------------------------------------------------------------- */
 let refreshContactLayout = () => {};
 
 function initContactLayout() {
-  const MIN_GAP = 16; // espace minimum (px) entre deux éléments sur la même ligne
+  const MIN_GAP = 16; // espace minimum (px) entre les deux éléments
   const sections = [...document.querySelectorAll(".hero, .footer")];
 
   function check(section) {
     const left = section.querySelector(".contact-left");
-    const middle = section.querySelector(".about-btn");
     const right = section.querySelector(".contact-right");
-    if (!left || !middle || !right) return;
+    if (!left || !right) return;
     section.classList.remove("contact-stacked"); // on mesure d'abord la disposition sur une ligne
-    const saved = [left, middle, right].map((el) => el.style.translate);
-    [left, middle, right].forEach((el) => { el.style.translate = ""; }); // sans le déplacement physique
     const a = left.getBoundingClientRect();
-    const b = middle.getBoundingClientRect();
     const c = right.getBoundingClientRect();
-    const fitsOnOneLine = a.right + MIN_GAP <= b.left && b.right + MIN_GAP <= c.left;
-    section.classList.toggle("contact-stacked", !fitsOnOneLine);
-    [left, middle, right].forEach((el, i) => { el.style.translate = saved[i]; });
+    section.classList.toggle("contact-stacked", a.right + MIN_GAP > c.left);
   }
 
   refreshContactLayout = () => sections.forEach(check);
@@ -1284,13 +1459,15 @@ function refreshHeroImage() {
   setImage($("hero-bg"), CONFIG.heroImage);
 }
 
-// Signe ▾ en bas de la page 1 : un clic descend à la page suivante.
+// Signe ▾ en bas de la page 1 : un clic glisse en douceur jusqu'à la page « Qui suis-je ».
 function initScrollCue() {
   const cue = $("scroll-cue");
   if (!cue) return;
   cue.addEventListener("click", () => {
-    const next = document.getElementById("projet-1") || document.querySelector(".footer");
-    if (next) next.scrollIntoView({ behavior: "smooth" });
+    const next = $("about-page") || document.getElementById("projet-1") || document.querySelector(".footer");
+    if (!next) return;
+    if (smooth) smooth.scrollToElement(next);
+    else next.scrollIntoView({ behavior: "smooth" });
   });
 }
 
@@ -1307,8 +1484,9 @@ function initCursor() {
 let talkWord = null;
 let kayaWord = null;
 
-// Titre « Let's talk! » : police Africa, centré dans la dernière page
-// (réglages : style.css, variables --talk-…).
+// Titre « Let's talk! » : police Africa, en haut à gauche de la dernière page,
+// dans le cadre .talk-link (réglages : style.css, --talk-w, --talk-h, --talk-tracking).
+// Clic / toucher sur le cadre ou sur une lettre = ouverture de la messagerie.
 function initTalkWord() {
   const footer = document.querySelector(".footer");
   if (!footer) return;
@@ -1319,9 +1497,9 @@ function initTalkWord() {
     fontFamilyVar: "--font-africa",
     fontFamilyFallback: "Georgia, serif",
     textColorVar: "--color-footer-text", // blanc (réglé dans style.css)
-    sizeVar: "--talk-size",
-    widthVar: "--talk-width",
     measureGlyphs: true,
+    anchor: $("talk-link"),
+    anchorAlign: "center",
     trackingVar: "--talk-tracking",
     gapVar: "--talk-gap",
     lastGapVar: "--talk-gap",
@@ -1345,8 +1523,10 @@ function applyLang(lang) {
   document.querySelectorAll(".lang button").forEach((button) => {
     button.setAttribute("aria-current", button.dataset.lang === lang ? "true" : "false");
   });
-  openInfoRefresh(); // le texte du « ? » ouvert est réécrit dans la nouvelle langue
-  projectInfoRefreshers.forEach((refresh) => refresh());
+  const talkLink = $("talk-link");
+  if (talkLink) talkLink.setAttribute("aria-label", typo(CONFIG.i18n[lang].letsTalkTitle || "", lang) + " — e-mail");
+  refreshProjectTitles();                  // titres des projets
+  if (questionMark) questionMark.refresh();
   refreshAboutImage();
   refreshContactLayout(); // les textes ont changé de longueur
   if (talkWord) talkWord.relayout();
@@ -1380,25 +1560,28 @@ function initGyroPopup(words) {
 
 /* ---- DÉMARRAGE (quand la page HTML est prête) ---- */
 document.addEventListener("DOMContentLoaded", () => {
+  questionMark = initQuestionMark();       // « ? » en mouvement
   openLightbox = initLightbox() || (() => {});
-  initProjects();       // crée les pages projets
+  initScrollFx();                          // animations liées au défilement
+  initProjects();                          // crée les projets (textes + galeries)
+  smooth = initSmoothScroll();             // défilement fluide
+  initActiveProject();                     // quel projet est à l'écran → « ? »
   initAbout();
   initFixedImages();
   applyContactEmail();
   initCursor();
   initTalkWord();
   initContactLayout();
-  initLang();           // remplit tous les textes (à faire après la création des pages)
+  initLang();           // remplit tous les textes (à faire après la création des projets)
 
-  // « kaya » : mêmes lettres mobiles que « Let's talk » (repoussées par le curseur ou le doigt,
-  // ramenées à leur place par un ressort). Tailles et écarts : style.css (--kaya-…).
+  // « kaya » : mêmes lettres mobiles que « Let's talk ». Tailles et écarts : style.css (--kaya-…).
   const kaya = createInteractiveWord({
     canvasId: "kaya-canvas",
     page: $("page1"),
     getChars: () => ["k", "a", "y", "a"],
     fontFamilyVar: "--font-africa",
     fontFamilyFallback: "Georgia, serif",
-    textColorVar: "--ink", // couleur du texte de la page 1 (style.css)
+    textColorVar: "--ink",
     sizeVar: "--kaya-size",
     widthVar: "--kaya-width",
     gapVar: "--kaya-gap",
@@ -1410,8 +1593,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initGyroPopup([kaya, talkWord]);
 
   // On attend la police Africa : les mots sont recalculés avec les vraies
-  // lettres, puis l'animation démarre. (Si la police ne charge pas, le
-  // site démarre quand même avec la police de secours.)
+  // lettres, puis l'animation démarre.
   const onFontReady = () => {
     [kaya, talkWord].forEach((w) => { if (w) { w.relayout(); w.start(); } });
   };
@@ -1419,7 +1601,6 @@ document.addEventListener("DOMContentLoaded", () => {
   else onFontReady();
 
   initScrollCue();
-  initCarouselKeys();
 
   // La police Alaska change la largeur des textes du bas de page : on revérifie.
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { refreshContactLayout(); if (kayaWord) kayaWord.relayout(); });
