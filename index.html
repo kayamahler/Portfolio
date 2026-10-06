@@ -30,14 +30,13 @@
      S'ouvre au clic sur le carrousel : c'est TOUJOURS l'image/la vidéo
      actuellement visible qui s'agrandit. Un nouveau clic (n'importe où),
      la croix ou la touche Échap la referme. Les flèches (ou les touches ← →,
-     ou un glissement) passent à l'image suivante. Ordinateur et tablette seulement :
-     sur téléphone, les images ne s'agrandissent pas (le « ? » est sur la page). -->
+     ou un glissement) passent à l'image suivante. Rien à modifier ici. -->
 <div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-modal="true">
   <button type="button" id="lightbox-close" class="lightbox-close" aria-label="Fermer">✕</button>
   <button type="button" id="lightbox-prev" class="lightbox-arrow prev" aria-label="Précédent">&gt;</button>
   <button type="button" id="lightbox-next" class="lightbox-arrow next" aria-label="Suivant">&gt;</button>
   <div id="lightbox-content" class="lightbox-content"></div>
-  <!-- « ? » (police Africa) : tombe du côté droit et reste couché en bas de la page. Un clic transforme l'image en fond noir
+  <!-- « ? » (police Africa) : tombe du haut de la page. Un clic transforme l'image en fond noir
        avec le texte du projet (police Alaska, machine à écrire). Un clic sur le texte ou sur « ? » le referme. -->
   <button type="button" id="lightbox-info-btn" class="lightbox-info-btn" aria-label="Info" aria-expanded="false">?</button>
   <div id="lightbox-info" class="lightbox-info" role="region" aria-live="polite"><span class="shown"></span><span class="rest"></span></div>
@@ -48,8 +47,7 @@
 
   <!-- ============ PAGE 1 : ACCUEIL ============ -->
   <section class="page hero" id="page1">
-    <!-- Image d'accueil en fond, à 50 % d'opacité (chemin : CONFIG.heroImage dans script.js ;
-         opacité : --hero-image-opacity dans style.css). -->
+    <!-- Image « Qui suis-je » (couleurs inversées), révélée sous les infos par le glitch (CONFIG.aboutImages) -->
     <img class="hero-bg" id="hero-bg" alt="">
 
     <!-- Choix de la langue (en haut à droite de la page 1).
@@ -58,18 +56,16 @@
       <button type="button" data-lang="fr">FR</button><span>|</span><button type="button" data-lang="en">EN</button><span>|</span><button type="button" data-lang="es">ES</button><span>|</span><button type="button" data-lang="it">IT</button>
     </nav>
 
-    <!-- Le mot « kaya » est dessiné sur ce canvas : mêmes lettres mobiles que « Let's talk »
-         (script.js, createInteractiveWord). Un clic sur une lettre ouvre « Qui suis-je ». -->
+    <!-- Le mot « kaya » est dessiné sur ce canvas (script.js, createFallingWord). Un clic sur une lettre ouvre « Qui suis-je ». -->
     <canvas id="kaya-canvas" role="img" aria-label="Kaya"></canvas>
 
-    <!-- Bas de page : GAUCHE = Ville/Pays · CENTRE = « Qui suis-je » · DROITE = e-mail (cliquable).
+    <!-- Bas de page : GAUCHE = Ville/Pays · CENTRE = signe ▾ · DROITE = e-mail (cliquable).
          S'ils ne tiennent pas sur une ligne, ils s'empilent automatiquement à droite.
          ★ E-mail à modifier UNIQUEMENT dans CONFIG.contactEmail (script.js) : il n'est jamais écrit en clair ici (anti-spam). -->
     <p class="contact-left" data-i18n="contactCity"></p>
-    <button type="button" class="about-btn" data-i18n="aboutLabel"></button>
     <address class="contact-right"><a class="mail" id="contact-email" href="#" aria-label="E-mail"></a></address>
 
-    <!-- Signe ▾ (juste au-dessus de « Qui suis-je ») : un clic descend à la page suivante (style.css, section 13). -->
+    <!-- Signe ▾ : un clic descend à la page suivante (style.css, section 13). -->
     <button type="button" class="scroll-cue" id="scroll-cue" aria-label="Défiler vers le bas">▾</button>
   </section>
 

@@ -194,7 +194,7 @@ const CONFIG = {
       gyroDecline: "Rechazar",
       aboutLabel: "¿Quién soy?",
       aboutClose: "Cerrar",
-      contactCity: "Lausana, Suiza",
+      contactCity: "Lausanne, Suiza",
       letsTalkTitle: "¡Hablemos!",
       projects: [
         { title: "AGENDA ERACOM",
@@ -274,103 +274,6 @@ function watchSize(element, callback) {
   else window.addEventListener("resize", callback);
 }
 
-// Téléphone ? (même condition que la section 15 de style.css)
-// Sur téléphone, les images ne s'agrandissent pas et le « ? » reste sur la page.
-const PHONE_QUERY = window.matchMedia("(max-width: 700px), (max-height: 500px) and (pointer: coarse)");
-const isPhone = () => PHONE_QUERY.matches;
-
-/* ---- Microtypographie ---------------------------------------------------
-   Appliquée automatiquement à TOUS les textes affichés (boutons, ville,
-   textes des projets) : tu peux donc écrire normalement dans CONFIG.
-     • apostrophe droite ' → apostrophe typographique ’ ;
-     • années 2026-2027 → tiret demi-cadratin 2026–2027 ;
-     • espace insécable entre un nombre et le mot qui suit (50 photographies) ;
-     • mots d'une ou deux lettres (à, y, de, la, un…) jamais seuls en fin de ligne ;
-     • pas de dernier mot court seul sur la dernière ligne d'un paragraphe ;
-     • français : espace fine insécable avant ; ! ? et à l'intérieur de « »,
-       espace insécable avant « : » ;
-     • espagnol et italien : guillemets «…» sans espace.
-   ---------------------------------------------------------------------- */
-const NBSP = "\u00A0";   // espace insécable
-const NNBSP = "\u202F";  // espace fine insécable
-function typo(text, lang = currentLang) {
-  let t = String(text == null ? "" : text);
-  t = t.replace(/'/g, "\u2019");                                   // ’
-  t = t.replace(/(\d{4})-(\d{2,4})/g, "$1\u2013$2");              // 2026–2027
-  t = t.replace(/(\d) (?=\p{L})/gu, "$1" + NBSP);                  // 50 photographies
-  if (lang === "fr") {
-    t = t.replace(/(\S)[ \u00A0\u202F]*([;!?])/g, "$1" + NNBSP + "$2");
-    t = t.replace(/([^\s\d])[ \u00A0\u202F]*:/g, "$1" + NBSP + ":");
-    t = t.replace(/«[ \u00A0\u202F]*/g, "«" + NNBSP).replace(/[ \u00A0\u202F]*»/g, NNBSP + "»");
-  } else if (lang === "es" || lang === "it") {
-    t = t.replace(/«[ \u00A0\u202F]*/g, "«").replace(/[ \u00A0\u202F]*»/g, "»");
-  }
-  // Dernier mot court (≤ 7 lettres) rattaché à l'avant-dernier : pas de mot isolé en fin de paragraphe.
-  t = t.split("\n").map((line) => {
-    const words = line.trim().split(" ");
-    if (words.length < 4 || words[words.length - 1].length > 7) return line;
-    const i = line.lastIndexOf(" ");
-    return line.slice(0, i) + NBSP + line.slice(i + 1);
-  }).join("\n");
-  // Mots d'une ou deux lettres (à, a, y, de, la, le, un, en, et…) attachés au mot suivant.
-  // Deux passages, pour les suites comme « de la crème ».
-  for (let k = 0; k < 2; k++) t = t.replace(/(^|[\s\u00A0(«“¿¡])(\p{L}{1,2}) (?=\S)/gmu, "$1$2" + NBSP);
-  return t;
-}
-
-/* ---- Texte explicatif d'un projet (bloc noir, texte blanc) --------------
-   Utilisé dans l'image agrandie (ordinateur, tablette) ET sur la page projet
-   (téléphone). Le bloc recouvre exactement l'image ; le texte s'écrit en
-   machine à écrire, à la plus grande taille qui tient dans le cadre. La
-   place de tout le texte est réservée dès le début : les lignes (et donc le
-   drapeau, le bord droit irrégulier) ne bougent jamais pendant l'écriture.
-   ---------------------------------------------------------------------- */
-function createInfoText(info) {
-  const shown = info.querySelector(".shown");
-  const rest = info.querySelector(".rest");
-  let token = {};
-
-  // box = { left, top, width, height } en px, dans le repère du parent du bloc.
-  function place(box) {
-    info.style.left = box.left + "px"; info.style.top = box.top + "px";
-    info.style.width = box.width + "px"; info.style.height = box.height + "px";
-    let lo = 9, hi = Math.min(box.height * 0.5, 150);
-    while (hi - lo > 0.5) {
-      const mid = (lo + hi) / 2;
-      info.style.fontSize = mid + "px";
-      if (info.scrollHeight <= info.clientHeight + 1 && info.scrollWidth <= info.clientWidth + 1) lo = mid; else hi = mid;
-    }
-    info.style.fontSize = Math.floor(lo * 2) / 2 + "px"; // demi-pixel : rendu net
-  }
-  function type(fullText) {
-    const mine = {};
-    token = mine;
-    const perTick = Math.max(1, Math.ceil(fullText.length / 260)); // les longs textes restent rapides
-    let i = 0;
-    (function tick() {
-      if (token !== mine) return;
-      i = Math.min(fullText.length, i + perTick);
-      shown.textContent = fullText.slice(0, i);
-      rest.textContent = fullText.slice(i);
-      if (i < fullText.length) setTimeout(tick, CONFIG.typeSpeed);
-    })();
-  }
-  return {
-    open(entry, box) {
-      const fullText = typo((entry.title ? entry.title + "\n\n" : "") + entry.text);
-      info.lang = currentLang; // césure dans la bonne langue
-      shown.textContent = "";
-      rest.textContent = fullText;
-      info.classList.add("open");
-      place(box);
-      type(fullText);
-    },
-    close() { token = {}; info.classList.remove("open"); },
-    place,
-    isOpen: () => info.classList.contains("open"),
-  };
-}
-
 /* ---- Chargement fiable des images -------------------------------------
    Avant d'afficher une image, on vérifie qu'elle existe. Si non, on
    essaie la même image avec d'autres extensions (.jpg, .webp…). Le
@@ -431,21 +334,15 @@ function sampleLuminance(media, box, rect) {
   if (!iw || !ih || (isVideo && media.readyState < 2)) return null;
 
   // Où se trouve "rect" dans l'image d'origine ?
-  // Ordinateur : image en « cover » (remplit le cadre) ; téléphone : « contain »
-  // (image entière dans un carré noir) : on suit le réglage réel de style.css.
   const b = box.getBoundingClientRect();
   if (!b.width || !b.height) return null;
-  const contain = getComputedStyle(media).objectFit === "contain";
-  const scale = contain ? Math.min(b.width / iw, b.height / ih) : Math.max(b.width / iw, b.height / ih);
+  const scale = Math.max(b.width / iw, b.height / ih); // même calcul que object-fit: cover
   const offX = (b.width - iw * scale) / 2;
   const offY = (b.height - ih * scale) / 2;
   const sx = Math.max(0, (rect.left - b.left - offX) / scale);
   const sy = Math.max(0, (rect.top - b.top - offY) / scale);
   const ex = Math.min(iw, (rect.right - b.left - offX) / scale);
   const ey = Math.min(ih, (rect.bottom - b.top - offY) / scale);
-  // Élément surtout en dehors de l'image (bande noire autour du carré) : fond sombre.
-  const covered = (Math.max(0, ex - sx) * Math.max(0, ey - sy) * scale * scale) / (rect.width * rect.height);
-  if (covered < 0.5) return 0;
   if (ex - sx < 1 || ey - sy < 1) return null;
 
   const S = contrastCanvas.width;
@@ -765,6 +662,326 @@ function createInteractiveWord(options) {
 
 
 /* =====================================================================
+   VERSION 2 : « KAYA » QUI TOMBE (physique)
+   ---------------------------------------------------------------------
+   • Les 4 lettres tombent du haut de la page (gravité), rebondissent un
+     peu, s'empilent et s'imbriquent (elles peuvent légèrement se chevaucher).
+   • Le curseur / le doigt les repousse ; le gyroscope les fait glisser.
+   • La ville, « Qui suis-je » et l'e-mail sont des blocs rigides : les lettres
+     et le curseur les poussent (déplacement uniquement, jamais de
+     déformation ni de rotation), puis un ressort les ramène à leur place.
+   • Quand on quitte la page 1 puis qu'on y revient, les lettres retombent.
+   Réglages : constante G ci-dessous + CONFIG.letterPhysics (curseur).
+   ===================================================================== */
+function createFallingWord(options) {
+  const {
+    canvasId, page, getChars, fontFamilyVar, fontFamilyFallback,
+    textColor = "#fff", textColorVar,
+    sizeVar, defaultSize = 0.28, widthVar, defaultWidth = 0.5,
+    gapVar, lastGapVar, spacingVar, onLetterClick,
+  } = options;
+
+  const canvas = $(canvasId);
+  if (!canvas || !page) return null;
+  const ctx = canvas.getContext("2d");
+  const P = CONFIG.letterPhysics;
+  // gravity : chute · bounce : rebond · friction : frottement au sol
+  // radius : taille de collision d'une lettre (plus petit = elles s'imbriquent davantage)
+  const G = { gravity: 0.6, bounce: 0.28, friction: 0.88, radius: 0.32 };
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const touchScreen = window.matchMedia("(hover: none) and (pointer: coarse)");
+  const fontFamily = readCSSString(fontFamilyVar, fontFamilyFallback);
+
+  // Ville, ▾ et e-mail : poussés par les lettres (jamais par le curseur), en bloc et sans se déformer,
+  // puis ils reviennent à leur place.
+  const infos = [...page.querySelectorAll(".contact-left, .about-btn, .scroll-cue, .contact-right")]
+    .map((el) => ({ el, fixed: false, x: 0, y: 0, vx: 0, vy: 0, homeX: 0, homeY: 0, hw: 0, hh: 0 }));
+
+  let W = 0, H = 0, fontSize = 0, letters = [], settings = {};
+  let started = false, onScreen = false, rafId = null, dropped = false;
+  const pointer = { x: -9999, y: -9999, vx: 0, vy: 0, active: false };
+  let lastSample = null;
+  const fontAt = (size) => `${size}px ${fontFamily}`;
+
+  function readSettings() {
+    const baseGap = readCSSNumber(gapVar, 1);
+    settings = {
+      baseGap,
+      lastGap: readCSSNumber(lastGapVar, baseGap),
+      extra: readCSSNumber(spacingVar, 0),
+      size: readCSSNumber(sizeVar, defaultSize),
+      width: readCSSNumber(widthVar, defaultWidth),
+      color: textColorVar ? readCSSString(textColorVar, textColor) : textColor,
+    };
+  }
+
+  // Place « de repos » du mot (utilisée pour la chute et si les animations sont réduites).
+  function layoutLetters() {
+    const chars = getChars();
+    const n = Math.max(chars.length, 1);
+    fontSize = Math.min((W * settings.width) / (n * 0.7), H * settings.size);
+    const r = fontSize * G.radius;
+    const dists = chars.slice(0, -1).map((_, i) =>
+      fontSize * 0.72 + (i === chars.length - 2 ? settings.lastGap : settings.baseGap) + settings.extra);
+    let x = W / 2 - dists.reduce((a, b) => a + b, 0) / 2;
+    letters = chars.map((char, i) => {
+      const old = letters[i] && letters[i].char === char ? letters[i] : null;
+      const homeX = x;
+      if (i < dists.length) x += dists[i];
+      return {
+        char, r, homeX, homeY: H / 2,
+        x: old ? old.x : homeX, y: old ? old.y : -fontSize * (1.5 + i * 1.6),
+        vx: old ? old.vx : 0, vy: old ? old.vy : 0, angle: old ? old.angle : 0,
+      };
+    });
+  }
+
+  // Mesure les blocs d'infos à leur place d'origine (sans leur déplacement).
+  function measureInfo() {
+    infos.forEach((b) => {
+      b.el.style.translate = "";
+      // offsetLeft / offsetTop ignorent les transformations : la mesure reste juste même
+      // pendant la chute des infos (animation CSS « drop-in »). Le ▾ est centré par un
+      // translateX(-50%) : son centre est donc son bord gauche.
+      const el = b.el;
+      b.hw = el.offsetWidth / 2; b.hh = el.offsetHeight / 2;
+      b.homeX = el.offsetLeft + (el.classList.contains("scroll-cue") ? 0 : b.hw);
+      b.homeY = el.offsetTop + b.hh;
+      b.x = b.homeX; b.y = b.homeY; b.vx = b.vy = 0;
+    });
+  }
+
+  // Fait tomber les lettres depuis le haut de la page.
+  function drop() {
+    letters.forEach((l, i) => {
+      l.x = l.homeX + (Math.random() - 0.5) * fontSize * 0.5;
+      l.y = -fontSize * (1 + i * 1.5);
+      l.vx = (Math.random() - 0.5) * 2; l.vy = 0;
+      l.angle = (Math.random() - 0.5) * 0.6;
+    });
+    infos.forEach((b) => { b.x = b.homeX; b.y = b.homeY; b.vx = b.vy = 0; });
+    // La langue, la ville et l'e-mail tombent aussi du haut de la page (animation CSS « drop-in »).
+    page.querySelectorAll(".lang, .contact-left, .contact-right").forEach((el) => {
+      el.classList.remove("drop-in"); void el.offsetWidth; el.classList.add("drop-in");
+    });
+    dropped = true;
+  }
+
+  function resize() {
+    W = page.clientWidth; H = page.clientHeight;
+    if (!W || !H) return;
+    let dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const maxPixels = 6e6;
+    if (W * H * dpr * dpr > maxPixels) dpr = Math.sqrt(maxPixels / (W * H));
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    readSettings();
+    layoutLetters();
+    measureInfo();
+    if (reduceMotion && started) letters.forEach((l) => { l.x = l.homeX; l.y = l.homeY; });
+    draw();
+  }
+
+  /* ---- Curseur / doigt ---- */
+  function samplePointer(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    const x = clientX - rect.left, y = clientY - rect.top, now = performance.now();
+    if (lastSample) {
+      const dt = Math.max(now - lastSample.t, 1);
+      pointer.vx = ((x - lastSample.x) / dt) * 16;
+      pointer.vy = ((y - lastSample.y) / dt) * 16;
+    }
+    pointer.x = x; pointer.y = y; pointer.active = true;
+    lastSample = { x, y, t: now };
+  }
+  function releasePointer() { pointer.active = false; lastSample = null; }
+  page.addEventListener("mousemove", (e) => samplePointer(e.clientX, e.clientY));
+  page.addEventListener("mouseleave", releasePointer);
+  page.addEventListener("touchmove", (e) => { if (e.touches[0]) samplePointer(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
+  page.addEventListener("touchend", releasePointer, { passive: true });
+
+  /* ---- Gyroscope (téléphone) ---- */
+  let gyroEnabled = false;
+  const gyroTilt = { x: 0, y: 0 };
+  function handleOrientation(e) {
+    if (e.beta === null && e.gamma === null) return; // appareil sans capteur : on ignore
+    gyroTilt.x = Math.max(-1, Math.min(1, (e.gamma || 0) / 30));
+    gyroTilt.y = Math.max(-1, Math.min(1, ((e.beta || 0) - 45) / 30));
+  }
+  function requestGyro() {
+    if (gyroEnabled) return Promise.resolve(true);
+    if (typeof DeviceOrientationEvent === "undefined") return Promise.resolve(false);
+    if (typeof DeviceOrientationEvent.requestPermission !== "function") {
+      window.addEventListener("deviceorientation", handleOrientation);
+      gyroEnabled = true;
+      return Promise.resolve(true);
+    }
+    return DeviceOrientationEvent.requestPermission()
+      .then((state) => {
+        if (state === "granted") { window.addEventListener("deviceorientation", handleOrientation); gyroEnabled = true; }
+        return gyroEnabled;
+      })
+      .catch(() => false);
+  }
+
+  /* ---- Clic sur une lettre ---- */
+  if (typeof onLetterClick === "function") {
+    canvas.addEventListener("click", (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left, y = e.clientY - rect.top;
+      if (letters.some((l) => Math.hypot(l.x - x, l.y - y) < Math.max(l.r, fontSize * 0.3))) onLetterClick();
+    });
+  }
+
+  /* ---- Collisions ---- */
+  function collideCircles(a, b) {
+    let dx = b.x - a.x, dy = b.y - a.y;
+    let d = Math.hypot(dx, dy);
+    const min = a.r + b.r;
+    if (d >= min) return;
+    if (d < 0.01) { dx = 0.01; dy = -0.01; d = Math.hypot(dx, dy); }
+    const nx = dx / d, ny = dy / d, push = (min - d) / 2;
+    a.x -= nx * push; a.y -= ny * push;
+    b.x += nx * push; b.y += ny * push;
+    const vn = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
+    if (vn < 0) {
+      const j = (-(1 + 0.15) * vn) / 2;
+      a.vx -= j * nx; a.vy -= j * ny; b.vx += j * nx; b.vy += j * ny;
+    }
+  }
+  // Lettre (cercle) contre bloc d'info (rectangle, 3 fois plus lourd).
+  function collideRect(l, b) {
+    const cx = Math.max(b.x - b.hw, Math.min(b.x + b.hw, l.x));
+    const cy = Math.max(b.y - b.hh, Math.min(b.y + b.hh, l.y));
+    let dx = l.x - cx, dy = l.y - cy;
+    const d = Math.hypot(dx, dy);
+    if (d >= l.r) return;
+    let nx, ny, overlap;
+    if (d > 0.001) { nx = dx / d; ny = dy / d; overlap = l.r - d; }
+    else { // centre de la lettre à l'intérieur du bloc : on sort par la face la plus proche
+      dx = l.x - b.x; dy = l.y - b.y;
+      if (Math.abs(dx) / b.hw > Math.abs(dy) / b.hh) { nx = Math.sign(dx) || 1; ny = 0; overlap = b.hw + l.r - Math.abs(dx); }
+      else { nx = 0; ny = Math.sign(dy) || -1; overlap = b.hh + l.r - Math.abs(dy); }
+    }
+    const share = b.fixed ? 1 : 0.75;
+    l.x += nx * overlap * share; l.y += ny * overlap * share;
+    if (!b.fixed) { b.x -= nx * overlap * 0.25; b.y -= ny * overlap * 0.25; }
+    const vn = (l.vx - b.vx) * nx + (l.vy - b.vy) * ny;
+    if (vn < 0) {
+      const j = (-(1 + 0.2) * vn) / (1 + 1 / 3);
+      l.vx += j * nx; l.vy += j * ny;
+      if (!b.fixed) { b.vx -= (j / 3) * nx; b.vy -= (j / 3) * ny; }
+    }
+  }
+
+  /* ---- Une image de l'animation ---- */
+  function step() {
+    pointer.vx *= 0.9; pointer.vy *= 0.9;
+    const reach = Math.max(fontSize * P.repelRadius, 120);
+    const speed = Math.min(Math.hypot(pointer.vx, pointer.vy), 40);
+    const gyro = touchScreen.matches && gyroEnabled;
+    const push = (o, k) => {
+      if (!pointer.active) return;
+      const dx = o.x - pointer.x, dy = o.y - pointer.y;
+      const dist = Math.max(Math.hypot(dx, dy), 1);
+      const influence = Math.max(0, 1 - dist / reach);
+      if (!influence) return;
+      const force = influence * (P.repelStrength + speed * P.speedBoost) * k;
+      o.vx += (dx / dist) * force; o.vy += (dy / dist) * force;
+    };
+
+    letters.forEach((l) => {
+      push(l, 1);
+      l.vy += G.gravity;
+      if (gyro) { l.vx += gyroTilt.x * P.gyroStrength * 0.15; l.vy += gyroTilt.y * P.gyroStrength * 0.15; }
+      l.vx *= 0.995; l.vy *= 0.995;
+      l.x += l.vx; l.y += l.vy;
+    });
+    infos.forEach((b) => {
+      if (b.fixed) return;
+      b.vx += (b.homeX - b.x) * 0.04; b.vy += (b.homeY - b.y) * 0.04;
+      b.vx *= 0.82; b.vy *= 0.82;
+      b.x += b.vx; b.y += b.vy;
+    });
+
+    for (let pass = 0; pass < 4; pass++) {
+      for (let i = 0; i < letters.length; i++)
+        for (let j = i + 1; j < letters.length; j++) collideCircles(letters[i], letters[j]);
+      letters.forEach((l) => infos.forEach((b) => collideRect(l, b)));
+      letters.forEach((l) => {
+        l.x = Math.max(l.r, Math.min(W - l.r, l.x));
+        if (l.y > H - l.r) l.y = H - l.r;
+      });
+      infos.forEach((b) => {
+        b.x = Math.max(b.hw, Math.min(W - b.hw, b.x));
+        b.y = Math.max(b.hh, Math.min(H - b.hh, b.y));
+      });
+    }
+
+    letters.forEach((l) => {
+      if (l.y >= H - l.r - 0.5) { // au sol
+        l.vy = l.vy > 2 ? -l.vy * G.bounce : 0;
+        l.vx *= G.friction;
+      }
+      if (l.x <= l.r + 0.5 && l.vx < 0) l.vx = -l.vx * 0.3;
+      if (l.x >= W - l.r - 0.5 && l.vx > 0) l.vx = -l.vx * 0.3;
+      const tilt = Math.max(-P.maxTilt, Math.min(P.maxTilt, l.vx * 0.06));
+      l.angle += (tilt - l.angle) * 0.1;
+    });
+    // Les blocs d'infos : déplacement seulement (propriété CSS « translate »).
+    infos.forEach((b) => { if (!b.fixed) b.el.style.translate = (b.x - b.homeX).toFixed(1) + "px " + (b.y - b.homeY).toFixed(1) + "px"; });
+    draw();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = fontAt(fontSize);
+    ctx.fillStyle = settings.color || textColor;
+    letters.forEach((l) => {
+      ctx.save();
+      ctx.translate(l.x, l.y);
+      ctx.rotate(l.angle);
+      ctx.fillText(l.char, 0, 0);
+      ctx.restore();
+    });
+  }
+
+  function loop() { step(); rafId = requestAnimationFrame(loop); }
+  function updateRunning() {
+    const shouldRun = started && onScreen && !reduceMotion;
+    if (shouldRun && rafId === null) {
+      if (!dropped) drop();
+      rafId = requestAnimationFrame(loop);
+    }
+    if (!shouldRun && rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
+  }
+
+  watchSize(page, resize);
+  watchVisibility(page, (visible) => {
+    if (!visible) dropped = false; // au retour, les lettres retombent
+    onScreen = visible;
+    updateRunning();
+  }, 0.3);
+  resize();
+  onContactLayoutChange = measureInfo; // si les infos s'empilent, on remesure
+
+  return {
+    start() {
+      started = true;
+      if (reduceMotion) letters.forEach((l) => { l.x = l.homeX; l.y = l.homeY; });
+      draw();
+      updateRunning();
+    },
+    requestGyro,
+    relayout: resize,
+  };
+}
+
+
+/* =====================================================================
    4. PAGES PROJETS
    ---------------------------------------------------------------------
    Une page est créée pour chaque bloc de PROJECT_IMAGES. Elle contient :
@@ -902,12 +1119,9 @@ function buildCarousel(section, items, projectIndex) {
     if (prevBtn) prevBtn.addEventListener("click", (e) => { e.stopPropagation(); prev(); });
   }
 
-  // Clic sur le carrousel : agrandit l'élément actuellement visible
-  // (ordinateur et tablette seulement ; sur téléphone, rien ne s'agrandit).
-  slidesBox.addEventListener("click", () => {
-    if (isPhone()) return;
-    openLightbox(slides, current, (i) => show(i, CONFIG.slideIntervalAfterClick), projectIndex);
-  });
+  // Clic sur le carrousel : agrandit l'élément actuellement visible.
+  slidesBox.addEventListener("click", () =>
+    openLightbox(slides, current, (i) => show(i, CONFIG.slideIntervalAfterClick), projectIndex));
 
   // Trackpad (glisser à droite / à gauche) et glissement du doigt : image suivante / précédente.
   onHorizontalGesture(section, (dir) => { if (!lightboxOpen) go(dir); });
@@ -942,14 +1156,10 @@ function initProjects() {
       '<div class="slides"></div>' +
       '<button type="button" class="carousel-arrow prev" aria-label="Précédent">&gt;</button>' +
       '<button type="button" class="carousel-arrow next" aria-label="Suivant">&gt;</button>' +
-      // « ? » et texte du projet sur la page : téléphone seulement (style.css, section 15).
-      '<button type="button" class="project-info-btn" aria-label="Info" aria-expanded="false">?</button>' +
-      '<div class="project-info" role="region" aria-live="polite"><span class="shown"></span><span class="rest"></span></div>' +
       '<p class="notice" hidden></p>';
     footer.before(section);
 
     const notice = section.querySelector(".notice");
-    initProjectInfo(section, index);
 
     // 2) Vérifier les images, puis construire le carrousel.
     Promise.all(entries.map(async (entry) => {
@@ -967,38 +1177,6 @@ function initProjects() {
     });
 
   });
-}
-
-/* ---- « ? » sur la page projet (téléphone) ---------------------------------
-   Toujours visible en haut à gauche. Un toucher : l'image devient un bloc
-   noir avec le texte du projet ; un toucher sur le texte ou sur « ? » le
-   referme. Sur ordinateur et tablette, ce « ? » est caché (il est dans
-   l'image agrandie).
-   ---------------------------------------------------------------------- */
-const projectInfoRefreshers = []; // réécrit les textes ouverts après un changement de langue
-
-function initProjectInfo(section, projectIndex) {
-  const btn = section.querySelector(".project-info-btn");
-  const info = section.querySelector(".project-info");
-  const slidesBox = section.querySelector(".slides");
-  if (!btn || !info || !slidesBox) return;
-  const panel = createInfoText(info);
-  const entry = () => (CONFIG.i18n[currentLang].projects || [])[projectIndex] || null;
-
-  // Cadre du texte = le carré de l'image, dans le repère de la page.
-  const box = () => {
-    const s = section.getBoundingClientRect(), r = slidesBox.getBoundingClientRect();
-    return { left: r.left - s.left, top: r.top - s.top, width: r.width, height: r.height };
-  };
-  const open = () => { const e = entry(); if (!e) return; panel.open(e, box()); btn.setAttribute("aria-expanded", "true"); };
-  const close = () => { panel.close(); btn.setAttribute("aria-expanded", "false"); };
-
-  btn.hidden = !entry();
-  btn.addEventListener("click", (e) => { e.stopPropagation(); if (panel.isOpen()) close(); else open(); });
-  info.addEventListener("click", (e) => { e.stopPropagation(); close(); });
-  watchSize(section, () => { if (panel.isOpen()) { if (isPhone()) panel.place(box()); else close(); } });
-  watchVisibility(section, (visible) => { if (!visible) close(); }); // on referme en quittant la page
-  projectInfoRefreshers.push(() => { btn.hidden = !entry(); if (panel.isOpen()) open(); });
 }
 
 /* ---- Geste horizontal (trackpad ou doigt) ------------------------------
@@ -1055,26 +1233,57 @@ function initLightbox() {
   const infoBtn = $("lightbox-info-btn");
   const info = $("lightbox-info");
   if (!overlay || !content || !infoBtn || !info) return null;
-  const panel = createInfoText(info);
+  const shown = info.querySelector(".shown");
+  const rest = info.querySelector(".rest");
 
   let list = [], index = 0, onChange = null, projectIndex = -1;
-  const infoIsOpen = () => panel.isOpen();
+  let typingToken = {};
+  const infoIsOpen = () => info.classList.contains("open");
   const entry = () => (CONFIG.i18n[currentLang].projects || [])[projectIndex] || null;
-  // Cadre du texte = l'image affichée (le calque est fixé à l'écran : coordonnées de la fenêtre).
-  const mediaBox = () => {
-    const r = content.firstElementChild.getBoundingClientRect();
-    return { left: r.left, top: r.top, width: r.width, height: r.height };
-  };
 
-  /* -- Texte du projet : l'image devient un bloc noir, texte blanc (createInfoText). -- */
+  /* -- Texte du projet : l'image devient un fond noir, texte blanc (Alaska),
+        écrit en machine à écrire, à la plus grande taille qui tient dans le cadre. -- */
+  function fitInfo() {
+    const media = content.firstElementChild;
+    if (!media) return;
+    const r = media.getBoundingClientRect();
+    info.style.left = r.left + "px"; info.style.top = r.top + "px";
+    info.style.width = r.width + "px"; info.style.height = r.height + "px";
+    let lo = 9, hi = Math.min(r.height * 0.5, 150);
+    while (hi - lo > 0.5) {
+      const mid = (lo + hi) / 2;
+      info.style.fontSize = mid + "px";
+      if (info.scrollHeight <= info.clientHeight + 1 && info.scrollWidth <= info.clientWidth + 1) lo = mid; else hi = mid;
+    }
+    info.style.fontSize = lo + "px";
+  }
+  function typeInfo(fullText) {
+    const token = {};
+    typingToken = token;
+    const perTick = Math.max(1, Math.ceil(fullText.length / 260)); // les longs textes restent rapides
+    let i = 0;
+    (function tick() {
+      if (typingToken !== token) return;
+      i = Math.min(fullText.length, i + perTick);
+      shown.textContent = fullText.slice(0, i);
+      rest.textContent = fullText.slice(i);
+      if (i < fullText.length) setTimeout(tick, CONFIG.typeSpeed);
+    })();
+  }
   function openInfo() {
     const e = entry();
     if (!e || !content.firstElementChild) return;
-    panel.open(e, mediaBox());
+    const fullText = (e.title ? e.title + "\n\n" : "") + e.text;
+    shown.textContent = "";
+    rest.textContent = fullText; // la place du texte est réservée dès le début : rien ne bouge
+    info.classList.add("open");
     infoBtn.setAttribute("aria-expanded", "true");
+    fitInfo();
+    typeInfo(fullText);
   }
   function closeInfo() {
-    panel.close();
+    typingToken = {};
+    info.classList.remove("open");
     infoBtn.setAttribute("aria-expanded", "false");
   }
 
@@ -1140,9 +1349,7 @@ function initLightbox() {
     else if (e.key === "ArrowRight") { e.preventDefault(); go(1); }
     else if (e.key === "ArrowLeft") { e.preventDefault(); go(-1); }
   });
-  window.addEventListener("resize", () => { if (lightboxOpen && infoIsOpen() && content.firstElementChild) panel.place(mediaBox()); });
-  // Passage en format téléphone (rotation, fenêtre réduite) : l'image agrandie se ferme.
-  PHONE_QUERY.addEventListener("change", () => { if (isPhone() && lightboxOpen) close(); });
+  window.addEventListener("resize", () => { if (lightboxOpen && infoIsOpen()) fitInfo(); });
 
   openInfoRefresh = () => { if (lightboxOpen && infoIsOpen()) openInfo(); }; // changement de langue
   return open;
@@ -1214,7 +1421,7 @@ function initAbout() {
    ===================================================================== */
 
 function initFixedImages() {
-  refreshHeroImage(); // page 1 : image d'accueil en fond
+  refreshHeroImage(); // page 1 : image « Qui suis-je » sous les infos
 }
 
 /* ---- E-mail à l'épreuve des robots ------------------------------------
@@ -1248,6 +1455,7 @@ function applyContactEmail() {
    Revérifié à chaque changement de taille d'écran, de langue ou de police.
    ---------------------------------------------------------------------- */
 let refreshContactLayout = () => {};
+let onContactLayoutChange = () => {}; // remplacée par la physique de la page 1
 
 function initContactLayout() {
   const MIN_GAP = 16; // espace minimum (px) entre deux éléments sur la même ligne
@@ -1255,7 +1463,7 @@ function initContactLayout() {
 
   function check(section) {
     const left = section.querySelector(".contact-left");
-    const middle = section.querySelector(".about-btn");
+    const middle = section.querySelector(".about-btn, .scroll-cue");
     const right = section.querySelector(".contact-right");
     if (!left || !middle || !right) return;
     section.classList.remove("contact-stacked"); // on mesure d'abord la disposition sur une ligne
@@ -1267,6 +1475,7 @@ function initContactLayout() {
     const fitsOnOneLine = a.right + MIN_GAP <= b.left && b.right + MIN_GAP <= c.left;
     section.classList.toggle("contact-stacked", !fitsOnOneLine);
     [left, middle, right].forEach((el, i) => { el.style.translate = saved[i]; });
+    if (section.classList.contains("hero")) onContactLayoutChange();
   }
 
   refreshContactLayout = () => sections.forEach(check);
@@ -1279,9 +1488,68 @@ function initContactLayout() {
    7. CURSEUR, LANGUE, iOS, DÉMARRAGE
    ===================================================================== */
 
-// Image de fond de la page 1 : l'image d'accueil (CONFIG.heroImage), à 50 % d'opacité (style.css).
+/* =====================================================================
+   GLITCH DE LA PAGE D'ACCUEIL
+   ---------------------------------------------------------------------
+   Quand on entre sur la page 1 (au chargement, et à chaque retour), la
+   page « glitche » : elle bascule plusieurs fois entre sa version normale
+   (fond noir, infos blanches) et sa version inversée (fond blanc, infos
+   noires), avec des bandes inversées et un léger décalage horizontal.
+   Un changement de langue rejoue le glitch (playGlitch).
+   Pendant le glitch, l'image de « Qui suis-je » apparaît sous les infos
+   (en couleurs inversées). Durée et rythme : tableau « times » ci-dessous.
+   ===================================================================== */
+let playGlitch = () => {};
+function initGlitch() {
+  const hero = document.querySelector(".hero");
+  if (!hero) return;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const bands = [];
+  for (let i = 0; i < 5; i++) {
+    const band = document.createElement("div");
+    band.className = "glitch-band";
+    hero.appendChild(band);
+    bands.push(band);
+  }
+  let timers = [];
+  const clearTimers = () => { timers.forEach(clearTimeout); timers = []; };
+
+  function frame(inverted) {
+    hero.classList.toggle("inverted", inverted);
+    hero.style.setProperty("--gx", ((Math.random() - 0.5) * 40).toFixed(1) + "px");
+    bands.forEach((band) => {
+      band.style.display = Math.random() < 0.6 ? "block" : "none";
+      band.style.top = (Math.random() * 95).toFixed(1) + "%";
+      band.style.height = (2 + Math.random() * 14).toFixed(1) + "%";
+    });
+  }
+  function end() {
+    hero.classList.remove("glitching", "inverted");
+    hero.style.removeProperty("--gx");
+    bands.forEach((band) => { band.style.display = "none"; });
+  }
+  function play() {
+    clearTimers();
+    if (reduce) { hero.classList.add("revealed"); return; }
+    hero.classList.add("glitching");
+    const times = [0, 80, 150, 260, 330, 450, 540, 680, 780, 900]; // ms
+    times.forEach((t, i) => timers.push(setTimeout(() => {
+      frame(i % 2 === 0);
+      if (i === 3) hero.classList.add("revealed"); // l'image apparaît
+    }, t)));
+    timers.push(setTimeout(end, 1000));
+  }
+
+  playGlitch = () => { hero.classList.add("revealed"); if (!reduce) play(); };
+  watchVisibility(hero, (visible) => {
+    if (visible) play();
+    else { clearTimers(); end(); hero.classList.remove("revealed"); }
+  }, 0.6);
+}
+
+// Image de fond de la page 1 = l'image « Qui suis-je » de la langue en cours.
 function refreshHeroImage() {
-  setImage($("hero-bg"), CONFIG.heroImage);
+  setImage($("hero-bg"), CONFIG.aboutImages[currentLang]);
 }
 
 // Signe ▾ en bas de la page 1 : un clic descend à la page suivante.
@@ -1315,7 +1583,7 @@ function initTalkWord() {
   talkWord = createInteractiveWord({
     canvasId: "talk-canvas",
     page: footer,
-    getChars: () => [...typo(CONFIG.i18n[currentLang].letsTalkTitle || "", "en")], // « Let’s » avec apostrophe typographique
+    getChars: () => (CONFIG.i18n[currentLang].letsTalkTitle || "").split(""),
     fontFamilyVar: "--font-africa",
     fontFamilyFallback: "Georgia, serif",
     textColorVar: "--color-footer-text", // blanc (réglé dans style.css)
@@ -1340,18 +1608,21 @@ function applyLang(lang) {
   // Chaque élément <… data-i18n="clé"> reçoit le texte de cette clé.
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     const value = CONFIG.i18n[lang][el.dataset.i18n];
-    if (value !== undefined) el.textContent = typo(value, lang);
+    if (value !== undefined) el.textContent = value;
   });
   document.querySelectorAll(".lang button").forEach((button) => {
     button.setAttribute("aria-current", button.dataset.lang === lang ? "true" : "false");
   });
   openInfoRefresh(); // le texte du « ? » ouvert est réécrit dans la nouvelle langue
-  projectInfoRefreshers.forEach((refresh) => refresh());
   refreshAboutImage();
   refreshContactLayout(); // les textes ont changé de longueur
   if (talkWord) talkWord.relayout();
   if (kayaWord) kayaWord.relayout();
+  refreshHeroImage();
+  if (langReady) playGlitch(); // nouveau glitch à chaque changement de langue (pas au premier affichage)
+  langReady = true;
 }
+let langReady = false;
 
 function initLang() {
   document.querySelectorAll(".lang button").forEach((button) => {
@@ -1390,9 +1661,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initContactLayout();
   initLang();           // remplit tous les textes (à faire après la création des pages)
 
-  // « kaya » : mêmes lettres mobiles que « Let's talk » (repoussées par le curseur ou le doigt,
-  // ramenées à leur place par un ressort). Tailles et écarts : style.css (--kaya-…).
-  const kaya = createInteractiveWord({
+  const kaya = createFallingWord({
     canvasId: "kaya-canvas",
     page: $("page1"),
     getChars: () => ["k", "a", "y", "a"],
@@ -1418,6 +1687,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (document.fonts && document.fonts.load) document.fonts.load('100px "Africa"').then(onFontReady, onFontReady);
   else onFontReady();
 
+  initGlitch();
   initScrollCue();
   initCarouselKeys();
 
