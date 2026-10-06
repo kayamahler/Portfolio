@@ -97,3 +97,21 @@ Avant la mise en ligne, mets `CONFIG.showMissingImages` sur `false`.
 - **Flèches** : zone de clic plus grande (`.carousel-arrow::after`).
 - **Téléphone** : images en carré 1:1 sur fond noir (section 15 de `style.css`), dans les carrousels comme dans l'image agrandie.
 - **Textes des projets** : mis à jour en FR, EN, ES et IT (`CONFIG.i18n.<langue>.projects`).
+
+
+## Version 4 — notes
+
+- **Page d'accueil** : l'image d'accueil (`CONFIG.heroImage`, `images/accueil.jpg`) est de nouveau en fond, sur toute la page, à 50 % d'opacité (`--hero-image-opacity` dans style.css). Sur téléphone, elle remplit tout l'écran.
+- **« Qui suis-je »** est de retour au centre du bas de la page d'accueil, entre la ville et l'e-mail. Le ▾ reste au-dessus.
+- **« kaya »** bouge maintenant exactement comme « Let's talk » : les lettres sont repoussées par le curseur ou le doigt, puis reviennent à leur place (`createInteractiveWord`). Tailles et écarts : `--kaya-size`, `--kaya-width`, `--kaya-gap`, `--kaya-last-gap`.
+- **Glitch supprimé**, ainsi que la chute des lettres et des infos.
+- **Téléphone** : les images des carrousels ne s'agrandissent plus. Le « ? » est toujours visible en haut à gauche de chaque page projet ; un toucher affiche le texte du projet sur l'image, un autre toucher le referme. Sur ordinateur et tablette, rien ne change (clic = image agrandie, avec son « ? »).
+- **Microtypographie** (automatique, fonction `typo` dans script.js) : apostrophes ’, tirets 2026–2027, espaces fines insécables en français avant ; ! ? et dans « », espace insécable avant :, guillemets «…» sans espace en espagnol et en italien, mots de 1 ou 2 lettres jamais en fin de ligne, pas de mot court isolé en dernière ligne. Tu écris normalement dans `CONFIG`, le site corrige à l'affichage.
+- **Drapeau des textes explicatifs** (style.css, section 14) : fins de ligne équilibrées (`text-wrap: pretty`), césure discrète dans la langue affichée (mots d'au moins 8 lettres), crénage et ligatures activés. Les lignes ne bougent pas pendant l'effet machine à écrire.
+- **Espagnol** : « Lausana, Suiza » (nom espagnol de la ville).
+
+
+## Version 5 — notes
+
+- **« ? » de l'image agrandie** (ordinateur et tablette, toutes les pages projets) : à chaque ouverture d'une image, il tombe du haut de la page du côté droit, rebondit, bascule et reste couché en bas à droite. Il reste cliquable. Réglages dans style.css, section 14 : `--q-size`, `--q-right`, `--q-bottom`, `--q-settle`, `--q-angle` (90deg = couché vers la droite, -90deg = vers la gauche) et la durée `1.8s`.
+- Sur téléphone, rien ne change : les images ne s'agrandissent pas et le « ? » reste visible en haut à gauche de la page projet.
