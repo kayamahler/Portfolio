@@ -140,7 +140,7 @@ const CONFIG = {
   },
 
   // ---- Aide pendant la construction du site ----
-  showMissingImages: true, // true = liste les images introuvables à l'écran. Mettre false à la mise en ligne.
+  showMissingImages: false, // true = liste les images introuvables à l'écran. Mettre false à la mise en ligne.
   imageExtensions: ["webp", "jpg", "jpeg", "png", "avif", "gif", "JPG", "JPEG", "PNG", "WEBP"],
 
   // ---- Textes (une rubrique par langue, mêmes clés partout) ----
