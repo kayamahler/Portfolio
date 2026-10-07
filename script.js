@@ -15,7 +15,7 @@
      1. ★ RÉGLAGES ET TEXTES FR / EN / ES / IT (CONFIG)
      2. OUTILS                                 typographie, chargement des images
      3. MOTS INTERACTIFS                       « kaya » et « Let's talk »
-     4. PROJETS                                défilement fluide, galeries, « ? », image agrandie
+     4. PROJETS                                défilement fluide, bandes horizontales, image agrandie
      5. « QUI SUIS-JE »
      6. PAGE 1 & DERNIÈRE PAGE                 e-mail, bas de page
      7. CURSEUR, LANGUE, iOS, DÉMARRAGE
@@ -30,21 +30,21 @@
    • "images/nom.jpg"             = une image.
    • { video: "images/nom.mp4" }  = une vidéo (en boucle, sans son ;
                                     avec le son dans l'image agrandie).
-   • Ajouter une page : copie un bloc entier, colle-le à la suite, puis
-     ajoute son titre et son texte dans CONFIG.i18n.fr/en/es.projects,
+   • Ajouter un projet : copie un bloc entier, colle-le à la suite, puis
+     ajoute son titre et son texte dans CONFIG.i18n.fr/en/es/it.projects,
      à la même position (3e bloc = 3e texte).
    • L'extension des IMAGES est retrouvée toute seule (.jpg, .webp, .png…).
      Pour les VIDÉOS, le chemin doit être exact.
    • Chemins relatifs à index.html : le dossier « images » est à côté.
    ===================================================================== */
 const PROJECT_IMAGES = [
-  // ---- Projet 1 (page 2) ----
+  // ---- Projet 1 ----
   [
     "images/projet1-1.webp",
     { video: "images/projet1-video.mp4" }, // ★ chemin réel de la vidéo (2e élément)
     "images/projet1-2.webp",
   ],
-  // ---- Projet 2 (page 3) ----
+  // ---- Projet 2 ----
   [
     "images/projet2-1.webp",
     "images/projet2-2.webp",
@@ -52,7 +52,7 @@ const PROJECT_IMAGES = [
     "images/projet2-4.png",
     
   ],
-  // ---- Projet 3 (page 4) ----
+  // ---- Projet 3 ----
   [
     "images/projet3-1.jpg",
     "images/projet3-2.jpg",
@@ -61,21 +61,21 @@ const PROJECT_IMAGES = [
     "images/projet3-5.jpg",
     "images/projet3-6.jpg",
   ],
-  // ---- Projet 4 (page 5) ----
+  // ---- Projet 4 ----
   [
     "images/projet4-1.jpg",
     "images/projet4-2.jpg",
     "images/projet4-3.jpg",
     "images/projet4-4.jpg",
   ],
-  // ---- Projet 5 (page 6) ----
+  // ---- Projet 5 ----
   [
     "images/projet5-1.jpg",
     "images/projet5-2.jpg",
     "images/projet5-3.jpg",
     
   ],
-  // ---- Projet 6 (page 7) ----
+  // ---- Projet 6 ----
   [
     "images/projet6-1.jpg",
     "images/projet6-2.jpg",
@@ -95,6 +95,9 @@ const CONFIG = {
   // n'y trouvent donc aucune adresse.
   contactEmail: { user: "kayamahler", domain: "eduvaud.ch" },
 
+  // ---- Nom affiché dans l'onglet, sur Google et dans les textes alternatifs ----
+  siteName: "Kaya Mahler",
+
   // ---- Langue affichée à la première visite : "fr", "en", "es" ou "it" ----
   defaultLang: "fr",
 
@@ -112,14 +115,6 @@ const CONFIG = {
     magnetDelay: 160,     // attente (ms) après le dernier mouvement avant de caler
     magnetThreshold: 0.12,// dès 12 % de page parcourue, on finit le mouvement
     magnetLerp: 0.07,     // douceur du calage
-  },
-
-  // ---- « ? » en mouvement (projets) ----
-  questionMark: {
-    float: 8,          // amplitude du flottement (px)
-    sway: 9,           // balancement permanent (degrés)
-    scrollTilt: 0.35,  // inclinaison selon la vitesse du défilement
-    maxTilt: 40,       // inclinaison maximale (degrés)
   },
 
   // ---- Mouvement des lettres (« kaya » et « Let's talk ») ----
@@ -159,6 +154,9 @@ const CONFIG = {
       aboutLabel: "Qui suis-je",
       aboutClose: "Fermer",
       contactCity: "Lausanne, Suisse",
+      // Référencement (Google, partage sur les réseaux) : sous-titre de l'onglet et description.
+      tagline: "Graphisme — Lausanne",
+      metaDescription: "Portfolio de Kaya Mahler, graphiste à Lausanne : affiches, éditions, typographie et photographie.",
       letsTalkTitle: "Let's talk!", // titre de la dernière page
       mailCopied: "Adresse copiée", // petit message après un clic sur l'e-mail
       // Un { title, text } par page projet, dans le même ordre que PROJECT_IMAGES.
@@ -184,6 +182,8 @@ const CONFIG = {
       aboutLabel: "Who am I",
       aboutClose: "Close",
       contactCity: "Lausanne, Switzerland",
+      tagline: "Graphic design — Lausanne",
+      metaDescription: "Portfolio of Kaya Mahler, graphic designer in Lausanne: posters, editorial design, typography and photography.",
       letsTalkTitle: "Let's talk!",
       mailCopied: "Address copied",
       projects: [
@@ -208,6 +208,8 @@ const CONFIG = {
       aboutLabel: "¿Quién soy?",
       aboutClose: "Cerrar",
       contactCity: "Lausana, Suiza",
+      tagline: "Diseño gráfico — Lausana",
+      metaDescription: "Portafolio de Kaya Mahler, diseño gráfico en Lausana: carteles, diseño editorial, tipografía y fotografía.",
       letsTalkTitle: "¡Hablemos!",
       mailCopied: "Dirección copiada",
       projects: [
@@ -232,6 +234,8 @@ const CONFIG = {
       aboutLabel: "Chi sono",
       aboutClose: "Chiudi",
       contactCity: "Losanna, Svizzera",
+      tagline: "Graphic design — Losanna",
+      metaDescription: "Portfolio di Kaya Mahler, graphic designer a Losanna: manifesti, editoria, tipografia e fotografia.",
       letsTalkTitle: "Parliamo!",
       mailCopied: "Indirizzo copiato",
       projects: [
@@ -328,12 +332,6 @@ function typo(text, lang = currentLang) {
   return t;
 }
 
-/* ---- Chargement fiable des images -------------------------------------
-   Avant d'afficher une image, on vérifie qu'elle existe. Si non, on
-   essaie la même image avec d'autres extensions (.jpg, .webp…). Le
-   résultat (adresse + largeur + hauteur) est mémorisé pour ne jamais
-   tester deux fois le même chemin.
-   ---------------------------------------------------------------------- */
 /* ---- E-mail ----------------------------------------------------------------
    L'adresse est assemblée à la demande (jamais écrite en clair dans la page).
    Ouverture fiable sur ordinateur, téléphone et tablette :
@@ -386,6 +384,12 @@ function armMailLink(link) {
   link.addEventListener("click", () => { arm(); showMailToast(); }); // pas de preventDefault : le navigateur suit le lien mailto:
 }
 
+/* ---- Chargement fiable des images -------------------------------------
+   Avant d'afficher une image, on vérifie qu'elle existe. Si non, on
+   essaie la même image avec d'autres extensions (.jpg, .webp…). Le
+   résultat (adresse + largeur + hauteur) est mémorisé pour ne jamais
+   tester deux fois le même chemin.
+   ---------------------------------------------------------------------- */
 const imageCache = new Map();
 
 // Renvoie { url, w, h } si l'image existe, sinon null.
@@ -737,7 +741,7 @@ function createInteractiveWord(options) {
 
 
 /* =====================================================================
-   4. PROJETS : DÉFILEMENT FLUIDE, GALERIES, « ? », IMAGE AGRANDIE
+   4. PROJETS : DÉFILEMENT FLUIDE, BANDES HORIZONTALES, IMAGE AGRANDIE
    ---------------------------------------------------------------------
    • Défilement fluide (initSmoothScroll) : sur ordinateur, la molette et
      le trackpad ne font plus « sauter » la page : le site glisse vers la
@@ -750,15 +754,13 @@ function createInteractiveWord(options) {
      hugeinc.com) ; après la dernière image, le texte entre et ses mots
      s'allument un à un (CONFIG.horizontal).
      Clic sur une image = image agrandie (tous les écrans).
-   • « ? » (initQuestionMark) : flotte en bas à droite tant qu'un projet
-     est à l'écran ; un clic mène au texte de ce projet.
+   • Téléphone / tablette : dans un projet, glisser le doigt vers le haut OU
+     sur le côté fait avancer la bande (initTouchSwipe).
    ===================================================================== */
 
 let lightboxOpen = false;        // true tant que l'image agrandie est ouverte
 let openLightbox = () => {};     // (éléments, position, n° du projet) — remplacée par initLightbox()
 let closeLightbox = () => {};    // remplacée par initLightbox()
-let activeProject = -1;          // projet au milieu de l'écran (-1 = page 1 ou dernière page)
-let questionMark = null;         // le « ? » (initQuestionMark)
 let smooth = null;               // le défilement fluide (initSmoothScroll)
 const projectSections = [];
 
@@ -771,6 +773,7 @@ const isAboutOpen = () => { const a = $("about"); return !!(a && a.classList.con
    image, indépendante de la fréquence de l'écran).
    Téléphone / tablette : défilement natif du navigateur (déjà fluide au
    doigt), avec un léger calage de la page 1 et de la dernière page (CSS).
+   jumpTo(y) : saut immédiat (utilisé par le retour à l'accueil, sous un voile).
    ---------------------------------------------------------------------- */
 function initSmoothScroll() {
   const scroller = $("scroller");
@@ -896,7 +899,15 @@ function initSmoothScroll() {
   reduce.addEventListener("change", setEnabled);
   setEnabled();
 
-  return { scrollTo, scrollToElement: (el) => { if (el) scrollTo(el.offsetTop); } };
+  // Saut immédiat, sans animation (le voile du retour à l'accueil le cache).
+  function jumpTo(y) {
+    stop();
+    clearTimeout(magnetTimer);
+    scroller.scrollTo({ top: clamp(y), behavior: "instant" });
+    target = current = scroller.scrollTop;
+  }
+
+  return { scrollTo, jumpTo, scrollToElement: (el) => { if (el) scrollTo(el.offsetTop); } };
 }
 
 /* ---- Projets en défilement horizontal (inspiré de hugeinc.com) -------------
@@ -921,6 +932,7 @@ function initScrollFx() {
 
   // Mesure une bande : longueur du glissement et hauteur de la section.
   function measure(pr) {
+    pr.section.querySelectorAll(".js-title").forEach(fitTitle);
     const vw = scroller.clientWidth, vh = scroller.clientHeight;
     pr.distance = Math.max(0, pr.track.scrollWidth - vw);       // glissement horizontal total (px)
     pr.hold = vh * CONFIG.horizontal.textHold;                  // temps de lecture, bande immobile
@@ -986,6 +998,86 @@ function initScrollFx() {
   schedule();
 }
 
+// Titres des projets : jamais coupés (pas de césure). Si un mot est plus large
+// que son bloc (téléphone, mot long), la taille du titre diminue juste assez
+// pour que le mot tienne en entier.
+function fitTitle(el) {
+  el.style.fontSize = "";
+  let size = parseFloat(getComputedStyle(el).fontSize) || 32;
+  let guard = 0;
+  while (el.scrollWidth > el.clientWidth + 1 && size > 14 && guard++ < 40) {
+    size *= 0.94;
+    el.style.fontSize = size.toFixed(1) + "px";
+  }
+}
+
+/* ---- Téléphone / tablette : glisser sur le côté fait aussi avancer ------------
+   Dans un projet, le doigt peut glisser vers le HAUT (défilement normal) ou
+   sur le CÔTÉ : vers la gauche = on avance (les images suivantes arrivent),
+   vers la droite = on revient. Le geste continue sur son élan quand on lâche.
+   ---------------------------------------------------------------------- */
+function initTouchSwipe() {
+  const scroller = $("scroller");
+  if (!scroller) return;
+  let start = null, mode = null, lastX = 0, lastT = 0, velocity = 0, glide = null;
+
+  const stopGlide = () => { if (glide) cancelAnimationFrame(glide); glide = null; };
+  // Position posée tout de suite (le CSS « scroll-behavior: smooth » animerait chaque pas).
+  const jump = (top) => scroller.scrollTo({ top, behavior: "instant" });
+
+  scroller.addEventListener("touchstart", (e) => {
+    stopGlide();
+    const t = e.touches[0];
+    if (e.touches.length !== 1 || !e.target.closest(".project-pin")) { start = null; return; }
+    start = { x: t.clientX, y: t.clientY, top: scroller.scrollTop };
+    mode = null; lastX = t.clientX; lastT = performance.now(); velocity = 0;
+  }, { passive: true });
+
+  scroller.addEventListener("touchmove", (e) => {
+    if (!start) return;
+    const t = e.touches[0];
+    const dx = t.clientX - start.x, dy = t.clientY - start.y;
+    if (!mode) {
+      if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+      mode = Math.abs(dx) > Math.abs(dy) ? "side" : "down"; // « down » : le navigateur s'en charge
+    }
+    if (mode !== "side") return;
+    if (e.cancelable) e.preventDefault();
+    jump(start.top - dx);
+    const now = performance.now();
+    const dt = Math.max(1, now - lastT);
+    velocity = 0.8 * velocity + 0.2 * ((lastX - t.clientX) / dt) * 16.7; // px par image
+    lastX = t.clientX; lastT = now;
+  }, { passive: false });
+
+  scroller.addEventListener("touchend", () => {
+    if (mode === "side" && Math.abs(velocity) > 0.5) {
+      let v = velocity;
+      const step = () => {
+        jump(scroller.scrollTop + v);
+        v *= 0.95;
+        glide = Math.abs(v) > 0.3 ? requestAnimationFrame(step) : null;
+      };
+      glide = requestAnimationFrame(step);
+    }
+    start = null; mode = null;
+  }, { passive: true });
+}
+
+// Texte alternatif des images d'un projet (lu par Google et les lecteurs d'écran) :
+// « Titre du projet — Kaya Mahler (2/4) », dans la langue en cours.
+function setProjectAlts(pr) {
+  const e = projectEntry(pr.index);
+  const n = pr.figures.length;
+  pr.figures.forEach((fig, k) => {
+    const media = fig.firstElementChild;
+    const label = (e ? typo(e.title) + " — " : "") + CONFIG.siteName + " (" + (k + 1) + "/" + n + ")";
+    if (media && media.tagName === "IMG") media.alt = label;
+    else if (media) media.setAttribute("aria-label", label);
+    fig.setAttribute("aria-label", label);
+  });
+}
+
 // Écrit le titre et le texte d'un projet, le texte découpé en mots (les espaces
 // insécables de la microtypographie restent dans le mot).
 function fillProjectText(pr) {
@@ -1006,6 +1098,7 @@ function fillProjectText(pr) {
     pr.words.push(w);
   });
   pr.lit = 0;
+  setProjectAlts(pr);
   pr.measured = false; // la largeur du texte peut changer avec la langue
   fx.schedule();
 }
@@ -1128,99 +1221,7 @@ function buildGallery(pr, items) {
     strip.appendChild(fig);
     pr.figures.push(fig);
   });
-}
-
-/* ---- Quel projet est au milieu de l'écran ? ----------------------------- */
-function initActiveProject() {
-  const scroller = $("scroller");
-  if (!("IntersectionObserver" in window) || !scroller) return;
-  const watched = [$("page1"), $("about-page"), ...projectSections, document.querySelector(".footer")].filter(Boolean);
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach((en) => {
-      if (!en.isIntersecting) return;
-      const i = en.target.dataset.project != null ? Number(en.target.dataset.project) : -1;
-      setActiveProject(i);
-    });
-  }, { root: scroller, rootMargin: "-49.5% 0px -49.5% 0px", threshold: 0 }); // une fine ligne au milieu de l'écran
-  watched.forEach((el) => io.observe(el));
-}
-
-function setActiveProject(i) {
-  if (i === activeProject) return;
-  activeProject = i;
-  if (questionMark && !lightboxOpen) questionMark.setProject(i);
-}
-
-/* ---- « ? » en mouvement ---------------------------------------------------
-   • Visible seulement quand un projet est à l'écran (ou dans l'image agrandie).
-   • Il flotte en permanence, penche selon la vitesse du défilement et fait
-     une pirouette à chaque nouveau projet (CONFIG.questionMark).
-   • Clic : le site glisse jusqu'au texte du projet visible (après sa
-     dernière image) ; dans l'image agrandie, elle se ferme d'abord.
-   ---------------------------------------------------------------------- */
-function initQuestionMark() {
-  const btn = $("qmark");
-  const scroller = $("scroller");
-  if (!btn || !scroller) return null;
-  const glyph = btn.querySelector("span");
-
-  let project = -1;
-
-  function kick() {
-    if (REDUCE_MOTION.matches) return;
-    glyph.classList.remove("kick");
-    void glyph.offsetWidth;
-    glyph.classList.add("kick");
-  }
-
-  /* -- Flottement permanent + inclinaison selon la vitesse de défilement -- */
-  let rafId = null, lastTop = 0, tilt = 0;
-  function loop(now) {
-    const Q = CONFIG.questionMark;
-    const t = now / 1000;
-    const top = scroller.scrollTop;
-    const v = top - lastTop; // px parcourus depuis l'image précédente
-    lastTop = top;
-    const wanted = Math.max(-Q.maxTilt, Math.min(Q.maxTilt, v * Q.scrollTilt));
-    tilt += (wanted - tilt) * 0.12;
-    const x = Math.sin(t * 1.1) * Q.float * 0.6;
-    const y = Math.sin(t * 1.7) * Q.float - Math.abs(tilt) * 0.25;
-    const r = Math.sin(t * 0.9) * Q.sway + tilt;
-    btn.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px) rotate(${r.toFixed(2)}deg)`;
-    rafId = requestAnimationFrame(loop);
-  }
-  function setMoving(on) {
-    if (REDUCE_MOTION.matches) return;
-    if (on && !rafId) { lastTop = scroller.scrollTop; rafId = requestAnimationFrame(loop); }
-    if (!on && rafId) { cancelAnimationFrame(rafId); rafId = null; }
-  }
-
-  function setProject(i) {
-    const changed = i !== project;
-    project = i;
-    const has = i >= 0 && !!projectEntry(i);
-    btn.classList.toggle("visible", has);
-    setMoving(has);
-    if (has && changed) kick();
-  }
-
-  // Va au texte du projet : la bande est arrivée au bout, le texte est entré.
-  function goToText() {
-    const pr = fx.projects[project];
-    if (!pr) return;
-    if (lightboxOpen) closeLightbox();
-    const y = pr.section.offsetTop + pr.distance + pr.hold * 0.85; // texte entièrement allumé
-    if (smooth) smooth.scrollTo(y); else scroller.scrollTo({ top: y, behavior: "smooth" });
-    kick();
-  }
-
-  btn.addEventListener("click", (e) => { e.stopPropagation(); goToText(); });
-
-  return {
-    setProject,
-    kick,
-    refresh() { btn.classList.toggle("visible", project >= 0 && !!projectEntry(project)); },
-  };
+  setProjectAlts(pr);
 }
 
 /* ---- Geste horizontal (trackpad ou doigt), pour l'image agrandie ----------
@@ -1253,8 +1254,7 @@ function onHorizontalGesture(element, callback) {
 /* ---- Image agrandie (lightbox), commune à tous les projets ----------------
    Ouverture : clic sur une image. Fermeture : nouveau clic n'importe où, la
    croix ou Échap. Suivante / précédente : flèches, touches ← →, trackpad ou
-   glissement du doigt. Le « ? » reste visible : un clic ferme l'image et
-   ramène au texte du projet.
+   glissement du doigt.
    ---------------------------------------------------------------------- */
 function initLightbox() {
   const overlay = $("lightbox");
@@ -1295,7 +1295,6 @@ function initLightbox() {
     content.innerHTML = "";
     lightboxOpen = false;
     list = [];
-    if (questionMark) questionMark.setProject(activeProject);
   }
 
   // elements = images/vidéos du projet · start = position · project = n° du projet
@@ -1306,7 +1305,6 @@ function initLightbox() {
     overlay.classList.add("open");
     overlay.setAttribute("aria-hidden", "false");
     lightboxOpen = true;
-    if (questionMark) { questionMark.setProject(project); questionMark.kick(); }
   }
 
   overlay.addEventListener("click", close);
@@ -1352,7 +1350,10 @@ function initAbout() {
     const url = found && found.url;
     if (thisRequest !== requestId) return;
     const aboutPageImg = $("about-page-img"); // page « Qui suis-je » (après la page 1)
+    const aboutAlt = CONFIG.siteName + " — " + typo(CONFIG.i18n[currentLang].aboutLabel || "");
+    image.alt = aboutAlt;
     if (aboutPageImg) {
+      aboutPageImg.alt = aboutAlt;
       if (url) { aboutPageImg.src = url; aboutPageImg.hidden = false; }
       else { aboutPageImg.removeAttribute("src"); aboutPageImg.hidden = true; }
     }
@@ -1418,7 +1419,7 @@ function applyContactEmail() {
     link.append(user, at, domain);
     armMailLink(link);
   });
-  armMailLink($("talk-link")); // « Let's talk » en haut à gauche de la dernière page
+  armMailLink($("talk-link")); // « Let's talk », au centre de la dernière page
 }
 
 /* ---- Bas de page : une ligne, ou empilé à droite ? --------------------
@@ -1471,6 +1472,40 @@ function initScrollCue() {
   });
 }
 
+/* ---- Retour à l'accueil (flèche ▴ de la dernière page) ---------------------
+   Doux ET direct : un voile du noir du site se pose (0,35 s), le site saute
+   d'un coup en haut (on ne voit pas défiler tous les projets), puis le voile
+   se lève et la page 1 apparaît en douceur. Réglages : style.css, section 13
+   (.veil, durées). Personnes sensibles au mouvement : retour immédiat.
+   ---------------------------------------------------------------------- */
+let goingHome = false;
+function goHome() {
+  const scroller = $("scroller");
+  const veil = $("veil");
+  const hero = $("page1");
+  const jump = () => {
+    if (smooth) smooth.jumpTo(0);
+    else scroller.scrollTo({ top: 0, behavior: "instant" });
+  };
+  if (!veil || REDUCE_MOTION.matches) { jump(); return; }
+  if (goingHome) return;
+  goingHome = true;
+  veil.classList.add("on");
+  setTimeout(() => {
+    jump();
+    if (hero) { hero.classList.remove("arrive"); void hero.offsetWidth; hero.classList.add("arrive"); }
+    requestAnimationFrame(() => {
+      veil.classList.remove("on");
+      setTimeout(() => { goingHome = false; if (hero) hero.classList.remove("arrive"); }, 1000);
+    });
+  }, 380);
+}
+
+function initScrollTop() {
+  const btn = $("scroll-top");
+  if (btn) btn.addEventListener("click", goHome);
+}
+
 // Rond qui suit la souris (taille : --cursor-size dans style.css ; caché sur les écrans tactiles).
 function initCursor() {
   const dot = $("cursor");
@@ -1484,7 +1519,7 @@ function initCursor() {
 let talkWord = null;
 let kayaWord = null;
 
-// Titre « Let's talk! » : police Africa, en haut à gauche de la dernière page,
+// Titre « Let's talk! » : police Africa, au centre de la dernière page,
 // dans le cadre .talk-link (réglages : style.css, --talk-w, --talk-h, --talk-tracking).
 // Clic / toucher sur le cadre ou sur une lettre = ouverture de la messagerie.
 function initTalkWord() {
@@ -1523,10 +1558,20 @@ function applyLang(lang) {
   document.querySelectorAll(".lang button").forEach((button) => {
     button.setAttribute("aria-current", button.dataset.lang === lang ? "true" : "false");
   });
+  // Référencement : titre de l'onglet, description et Open Graph dans la langue choisie.
+  const L = CONFIG.i18n[lang];
+  const pageTitle = CONFIG.siteName + " — " + typo(L.tagline || "", lang);
+  document.title = pageTitle;
+  const setMeta = (sel, value) => { const m = document.querySelector(sel); if (m && value) m.setAttribute("content", value); };
+  setMeta('meta[name="description"]', L.metaDescription);
+  setMeta('meta[property="og:title"]', pageTitle);
+  setMeta('meta[property="og:description"]', L.metaDescription);
+  setMeta('meta[property="og:locale"]', { fr: "fr_CH", en: "en_GB", es: "es_ES", it: "it_CH" }[lang]);
+  const aboutPage = $("about-page");
+  if (aboutPage) aboutPage.setAttribute("aria-label", typo(L.aboutLabel || "", lang));
   const talkLink = $("talk-link");
   if (talkLink) talkLink.setAttribute("aria-label", typo(CONFIG.i18n[lang].letsTalkTitle || "", lang) + " — e-mail");
   refreshProjectTitles();                  // titres des projets
-  if (questionMark) questionMark.refresh();
   refreshAboutImage();
   refreshContactLayout(); // les textes ont changé de longueur
   if (talkWord) talkWord.relayout();
@@ -1560,12 +1605,11 @@ function initGyroPopup(words) {
 
 /* ---- DÉMARRAGE (quand la page HTML est prête) ---- */
 document.addEventListener("DOMContentLoaded", () => {
-  questionMark = initQuestionMark();       // « ? » en mouvement
   openLightbox = initLightbox() || (() => {});
   initScrollFx();                          // animations liées au défilement
   initProjects();                          // crée les projets (textes + galeries)
   smooth = initSmoothScroll();             // défilement fluide
-  initActiveProject();                     // quel projet est à l'écran → « ? »
+  initTouchSwipe();                        // téléphone : glisser sur le côté fait aussi avancer
   initAbout();
   initFixedImages();
   applyContactEmail();
@@ -1601,7 +1645,14 @@ document.addEventListener("DOMContentLoaded", () => {
   else onFontReady();
 
   initScrollCue();
+  initScrollTop();
 
   // La police Alaska change la largeur des textes du bas de page : on revérifie.
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { refreshContactLayout(); if (kayaWord) kayaWord.relayout(); });
+  // Elle change aussi la largeur des titres et des textes des projets : on remesure les bandes.
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => {
+    refreshContactLayout();
+    if (kayaWord) kayaWord.relayout();
+    fx.projects.forEach((pr) => { pr.measured = false; });
+    fx.schedule();
+  });
 });

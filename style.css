@@ -13,10 +13,9 @@
 
    PLAN : 1 ★ Variables (polices, couleurs, tailles, marges)
           2 Base · 3 Défilement · 4 Page 1 + bas de page commun
-          5 « Qui suis-je » · 6 Projets (galeries) · 7 Dernière page
+          5 « Qui suis-je » · 6 Projets (bandes horizontales) · 7 Dernière page
           8 Pop-up iOS · 9 ★ Adaptation aux écrans · 10 Accessibilité
-          11 Fond noir de la page 1 · 13 Signe ▾, e-mail, flèches
-          14 « ? » en mouvement
+          13 Signes ▾ ▴, retour à l'accueil, e-mail, flèches
    ===================================================================== */
 
 
@@ -32,18 +31,20 @@
 
 :root {
   /* ---- Polices ---- */
-  --font-africa: "Africa", Georgia, serif;    /* « kaya », « Let's talk », « ? » */
+  --font-africa: "Africa", Georgia, serif;    /* « kaya », « Let's talk » */
   --font-alaska: "Alaska", Arial, sans-serif; /* tout le reste */
 
   /* ---- Curseur personnalisé (rond, ordinateur seulement) ---- */
   --cursor-size: 24px;
 
-  /* ---- Couleurs ---- */
+  /* ---- Couleurs ----
+     --site-bg : LE noir du site, utilisé partout (page 1, « Qui suis-je »,
+                 projets, dernière page). Le changer ici le change sur tout le site. */
+  --site-bg: #111;
   --ink: #fff;                        /* texte de la page 1 */
-  --paper: #fff;                      /* fond du « Qui suis-je » */
-  --color-project-bg: #111;           /* fond des projets, derrière les images */
+  --color-project-bg: var(--site-bg); /* fond des projets, derrière les images */
   --color-project-text: #fff;         /* titres des projets */
-  --color-footer-bg: #000;            /* fond de la dernière page (noir) */
+  --color-footer-bg: var(--site-bg);  /* fond de la dernière page */
   --color-footer-text: #fff;          /* textes de la dernière page, y compris « Let's talk » (blanc) */
   --color-notice-bg: rgba(0,0,0,.6);  /* message « images introuvables » */
   --color-notice-text: #fff;
@@ -63,9 +64,15 @@
   --hero-image-opacity: 0.5;
 
   /* ---- Image « Qui suis-je » (page 2 et plein écran) ----
-     --about-invert : 1 = couleurs inversées (le fond blanc devient noir),
-                      0 = couleurs d'origine. */
+     --about-invert : 1 = couleurs inversées, 0 = couleurs d'origine ;
+     --about-bg     : fond de la page (le même noir que le site) ;
+     --about-blend  : « lighten » = les parties noires de l'image inversée
+                      prennent exactement le noir du fond (--site-bg).
+     Pour revenir à l'image d'origine sur fond blanc :
+       --about-invert: 0;  --about-bg: #fff;  --about-blend: normal; */
   --about-invert: 1;
+  --about-bg: var(--site-bg);
+  --about-blend: lighten;
 
   /* ---- Mot « kaya » (page 1) ---- */
   --kaya-size: 0.28;
@@ -101,8 +108,6 @@
   --desc-size: clamp(14px, min(1.25vw, 2.2vh), 21px);
   --word-dim: 0.16;
 
-  /* ---- « ? » en mouvement (taille) ---- */
-  --q-size: clamp(56px, 6.5vw, 96px);
 }
 
 
@@ -110,7 +115,7 @@
    2. BASE
    ===================================================================== */
 *, *::before, *::after { box-sizing: border-box; }
-html, body { margin: 0; height: 100%; overflow: hidden; overscroll-behavior-x: none; background: #000; font-family: var(--font-alaska); -webkit-text-size-adjust: 100%; }
+html, body { margin: 0; height: 100%; overflow: hidden; overscroll-behavior-x: none; background: var(--site-bg); font-family: var(--font-alaska); -webkit-text-size-adjust: 100%; }
 
 /* ---- Microtypographie de base (tout le site) ---- */
 body {
@@ -122,6 +127,13 @@ body {
 }
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; }
 [hidden] { display: none !important; }
+
+/* Texte lu par Google et les lecteurs d'écran, mais invisible à l'écran (titre h1). */
+.sr-only {
+  position: absolute !important; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+.noscript { position: fixed; inset: auto 0 0 0; z-index: 10001; padding: 16px; background: var(--site-bg); color: #fff; font-size: 14px; }
 
 /* ---- Aucun texte souligné ni surligné ---- */
 a, a:visited, a:hover, a:active, button { color: inherit; text-decoration: none; }
@@ -144,8 +156,9 @@ a, a:visited, a:hover, a:active, button { color: inherit; text-decoration: none;
 /* =====================================================================
    3. DÉFILEMENT
    ---------------------------------------------------------------------
-   • Page 1 et dernière page : un écran chacune (classe .page).
-   • Projets : défilement LIBRE et fluide, comme un long rouleau.
+   • Page 1, « Qui suis-je » et dernière page : un écran chacune (classe .page).
+   • Projets : longues sections ; pendant qu'on les traverse, la bande
+     d'images glisse de côté (section 6).
    • Ordinateur (souris, trackpad) : script.js ajoute la classe
      .smooth-scroll sur <html> et anime lui-même le défilement avec
      inertie (CONFIG.smoothScroll) ; la page 1 et la dernière page se
@@ -173,7 +186,7 @@ a, a:visited, a:hover, a:active, button { color: inherit; text-decoration: none;
 /* =====================================================================
    4. PAGE 1 (ACCUEIL) + BAS DE PAGE COMMUN
    ===================================================================== */
-.hero { background: #000; color: var(--ink); }
+.hero { background: var(--site-bg); color: var(--ink); }
 /* Image d'accueil : couvre toute la page (rognée si besoin, jamais déformée), à 50 % d'opacité. */
 .hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: var(--hero-image-opacity); z-index: 0; pointer-events: none; }
 #kaya-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: 1; touch-action: pan-y; }
@@ -221,15 +234,14 @@ a, a:visited, a:hover, a:active, button { color: inherit; text-decoration: none;
    5. « QUI SUIS-JE » (image plein écran, au clic sur une lettre de « kaya »)
    ===================================================================== */
 .about {
-  position: fixed; inset: 0; z-index: 9000; background: var(--paper);
+  position: fixed; inset: 0; z-index: 9000; background: var(--about-bg); color: #fff; isolation: isolate;
   display: flex; align-items: center; justify-content: center;
   padding: calc(var(--edge-y) + 32px) var(--edge-x);
   opacity: 0; visibility: hidden; transition: opacity .4s ease, visibility .4s ease;
 }
 .about.open { opacity: 1; visibility: visible; }
-/* Couleurs inversées (image, fond et bouton « Fermer ») : --about-invert, section 1. */
-.about { filter: invert(var(--about-invert)); }
-.about img { max-width: 100%; max-height: 100%; object-fit: contain; }
+/* Image inversée ; ses noirs prennent le noir du site (--about-…, section 1). */
+.about img { max-width: 100%; max-height: 100%; object-fit: contain; filter: invert(var(--about-invert)); mix-blend-mode: var(--about-blend); }
 .about-missing { margin: 0; font-size: 14px; text-align: center; }
 .about-close {
   position: absolute; font-size: var(--ui-font-size);
@@ -243,8 +255,9 @@ a, a:visited, a:hover, a:active, button { color: inherit; text-decoration: none;
    --ap (0 → 1, script.js) : progression de l'arrivée de la page ; l'image
    passe d'un léger zoom à sa taille normale, entière.
    ===================================================================== */
-/* Toute la page est inversée (image ET fond) : --about-invert, section 1. */
-.about-page { background: var(--paper); filter: invert(var(--about-invert)); }
+/* Image inversée sur le noir du site : grâce au mode « lighten », les noirs de
+   l'image deviennent exactement --site-bg (aucun rectangle plus noir). */
+.about-page { background: var(--about-bg); isolation: isolate; }
 .about-page-img {
   position: absolute; inset: 0; width: 100%; height: 100%;
   padding: calc(var(--edge-y) + env(safe-area-inset-top) + 8px) calc(var(--edge-x) + env(safe-area-inset-right))
@@ -252,6 +265,8 @@ a, a:visited, a:hover, a:active, button { color: inherit; text-decoration: none;
   object-fit: contain; object-position: center;
   transform: scale(calc(1 + (1 - var(--ap, 1)) * .14)) translateY(calc((1 - var(--ap, 1)) * -6%));
   opacity: calc(.2 + var(--ap, 1) * .8);
+  filter: invert(var(--about-invert));
+  mix-blend-mode: var(--about-blend);
   will-change: transform;
 }
 
@@ -272,6 +287,7 @@ a, a:visited, a:hover, a:active, button { color: inherit; text-decoration: none;
 .project-pin {
   position: sticky; top: 0;
   height: 100vh; height: 100dvh; overflow: hidden;
+  touch-action: pan-y; /* doigt vers le haut = navigateur ; doigt sur le côté = script.js (initTouchSwipe) */
 }
 .project-track {
   position: absolute; top: 0; left: 0; height: 100%;
@@ -291,10 +307,12 @@ a, a:visited, a:hover, a:active, button { color: inherit; text-decoration: none;
   font-size: var(--ui-font-size); line-height: 1.4; letter-spacing: .06em;
   opacity: .5; font-variant-numeric: tabular-nums;
 }
+/* Titres : jamais de césure, les mots restent entiers. Si un mot est trop
+   long pour la largeur, script.js réduit la taille du titre (fitTitle). */
 .project-title {
   margin: 0; font-family: var(--font-alaska); font-weight: normal;
   font-size: var(--title-size); line-height: .98; letter-spacing: -.015em;
-  overflow-wrap: break-word; -webkit-hyphens: auto; hyphens: auto;
+  -webkit-hyphens: manual; hyphens: manual; overflow-wrap: normal; word-break: normal;
 }
 
 /* Les images, côte à côte. */
@@ -331,12 +349,13 @@ a, a:visited, a:hover, a:active, button { color: inherit; text-decoration: none;
 .project-text {
   flex: 0 0 auto; width: var(--text-w);
   max-height: calc(100% - 2 * var(--edge-y) - 24px); overflow-y: auto; scrollbar-width: none;
-  margin-right: var(--text-mr, calc(var(--edge-x) + env(safe-area-inset-right) + var(--q-size))); /* place pour le « ? » */
+  margin-right: calc(var(--edge-x) + env(safe-area-inset-right));
 }
 .project-text::-webkit-scrollbar { display: none; }
 .project-text-title {
   margin: 0; font-family: var(--font-alaska); font-weight: normal;
   font-size: calc(var(--title-size) * .6); line-height: 1.02;
+  -webkit-hyphens: manual; hyphens: manual; overflow-wrap: normal; word-break: normal;
 }
 .project-rule {
   height: 1px; margin: clamp(14px, 2.6vh, 26px) 0;
@@ -437,11 +456,19 @@ a, a:visited, a:hover, a:active, button { color: inherit; text-decoration: none;
     --slide-gap: 14px;
     --intro-w: 78vw;
     --text-w: calc(100vw - 2 * var(--edge-x));
-    --text-mr: var(--edge-x);
-    --title-size: clamp(34px, 11vw, 56px);
+    --title-size: clamp(30px, 9.5vw, 52px);
     --desc-size: clamp(13px, 1.9vh, 16px);
-    --color-project-bg: #000;
   }
+  /* Page « Qui suis-je » : juste la hauteur de l'image, pour qu'elle soit
+     suivie de près par le premier projet (pas de grand vide noir). Pas de
+     calage sur elle : il retiendrait le défilement à l'entrée du 1er projet. */
+  .about-page { height: auto; scroll-snap-align: none; }
+  .about-page-img {
+    position: relative; inset: auto; height: auto;
+    padding: calc(var(--edge-y) + env(safe-area-inset-top) + 24px) var(--edge-x) 8px;
+  }
+  /* Début d'un projet : titre centré en hauteur (aligné avec les images). */
+  .project-intro { justify-content: center; padding-bottom: 0; }
 }
 
 /* Écrans peu hauts : téléphone couché, fenêtre réduite (≤ 500 px de haut) */
@@ -481,12 +508,14 @@ a, a:visited, a:hover, a:active, button { color: inherit; text-decoration: none;
   .project-item { transform: none; opacity: 1; }
   .about-page-img { transform: none; opacity: 1; }
   .project-desc .w { opacity: 1; transition: none; }
-  .qmark span.kick { animation: none; }
 }
 
 
 /* =====================================================================
-   13. SIGNE ▾, E-MAIL CLIQUABLE, FLÈCHES PLUS FACILES À TOUCHER
+   13. SIGNES ▾ ▴, E-MAIL CLIQUABLE, FLÈCHES PLUS FACILES À TOUCHER
+   ---------------------------------------------------------------------
+   ▾ (page 1) : descend à « Qui suis-je ». ▴ (dernière page) : remonte à
+   l'accueil. Même style ; ils remontent si le bas de page est empilé.
    ===================================================================== */
 .scroll-cue {
   position: absolute; z-index: 6; left: 50%; transform: translateX(-50%);
@@ -494,7 +523,21 @@ a, a:visited, a:hover, a:active, button { color: inherit; text-decoration: none;
   font-family: Arial, sans-serif; font-size: clamp(64px, 8vw, 120px); line-height: 1;
   padding: 6px 22px; color: #fff;
 }
-.hero.contact-stacked .scroll-cue { bottom: calc(var(--edge-y) + env(safe-area-inset-bottom) + var(--ui-font-size) * 3.3); }
+.contact-stacked .scroll-cue { bottom: calc(var(--edge-y) + env(safe-area-inset-bottom) + var(--ui-font-size) * 3.3); }
+.footer .scroll-top { z-index: 3; } /* au-dessus des lettres de « Let's talk » */
+
+/* Retour à l'accueil (script.js, goHome) : le voile se pose en 0,35 s, le site
+   saute en haut, puis le voile se lève en 0,7 s pendant que la page 1 apparaît. */
+.veil {
+  position: fixed; inset: 0; z-index: 9900; background: var(--site-bg);
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity .7s cubic-bezier(.3, .7, .2, 1), visibility 0s linear .7s;
+}
+.veil.on { opacity: 1; visibility: visible; transition: opacity .35s ease-in, visibility 0s; }
+.hero.arrive .hero-bg { animation: hero-bg-in 1s cubic-bezier(.2, .7, .2, 1); }
+.hero.arrive #kaya-canvas { animation: hero-word-in 1s cubic-bezier(.2, .7, .2, 1); }
+@keyframes hero-bg-in   { from { transform: scale(1.06); } }
+@keyframes hero-word-in { from { transform: translateY(3%); opacity: 0; } }
 
 .contact-left, .contact-right { pointer-events: auto; }
 .contact-right a { display: inline-block; padding: 14px 12px; margin: -14px -12px; touch-action: manipulation; }
@@ -526,35 +569,3 @@ a, a:visited, a:hover, a:active, button { color: inherit; text-decoration: none;
 .lightbox-arrow.next { right: env(safe-area-inset-right); transform: translateY(-50%); }
 .lightbox-arrow::after { content: ""; position: absolute; inset: -80px -40px; }
 @media (pointer: coarse) { .lightbox-arrow::after { inset: -100px -44px; } }
-
-
-/* =====================================================================
-   14. « ? » EN MOUVEMENT ET TEXTE DU PROJET
-   ---------------------------------------------------------------------
-   Le « ? » flotte en bas à droite dès qu'un projet est à l'écran (et dans
-   l'image agrandie). script.js le fait flotter, pencher selon la vitesse
-   du défilement (CONFIG.questionMark), et lui fait faire une pirouette
-   (.kick) à chaque nouveau projet. Un clic ramène au texte du projet.
-   Réglage de la taille : --q-size (section 1).
-   ===================================================================== */
-.qmark {
-  position: fixed; z-index: 9700;
-  right: calc(var(--edge-x) + env(safe-area-inset-right));
-  bottom: calc(var(--edge-y) + env(safe-area-inset-bottom));
-  width: 1.1em; height: 1.1em; padding: 0; display: grid; place-items: center;
-  font-family: var(--font-africa); font-size: var(--q-size); line-height: 1;
-  color: #fff; mix-blend-mode: difference;
-  opacity: 0; visibility: hidden; transition: opacity .45s ease, visibility .45s ease;
-  will-change: transform;
-}
-.qmark.visible { opacity: 1; visibility: visible; }
-.qmark span { display: block; }
-.qmark::after { content: ""; position: absolute; inset: -16px; } /* zone de clic un peu plus grande */
-.qmark span.kick { animation: q-kick 1s cubic-bezier(.3, .7, .3, 1); }
-@keyframes q-kick {
-  0%   { transform: translateY(0)    rotate(0deg); }
-  35%  { transform: translateY(-45%) rotate(-200deg); }
-  62%  { transform: translateY(0)    rotate(-360deg); }
-  76%  { transform: translateY(-12%) rotate(-360deg); }
-  100% { transform: translateY(0)    rotate(-360deg); }
-}

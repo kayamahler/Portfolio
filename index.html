@@ -3,10 +3,61 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Projet Kaya</title>
+
+  <!-- ============ RÉFÉRENCEMENT (SEO) ============
+       Titre et description : ceux de la langue choisie sont remis à jour par
+       script.js (CONFIG.siteName, CONFIG.i18n.<langue>.tagline / metaDescription).
+       ★ À LA MISE EN LIGNE : remplace « https://www.exemple.ch/ » ci-dessous
+         (3 fois) par l'adresse réelle du site, puis enlève les <!-- --> autour
+         de la ligne « canonical ». -->
+  <title>Kaya Mahler — Graphisme — Lausanne</title>
+  <meta name="description" content="Portfolio de Kaya Mahler, graphiste à Lausanne : affiches, éditions, typographie et photographie.">
+  <meta name="author" content="Kaya Mahler">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <!-- <link rel="canonical" href="https://www.exemple.ch/"> -->
+  <meta name="theme-color" content="#111111">
+  <meta name="color-scheme" content="dark">
+
+  <!-- Aperçu lors d'un partage (WhatsApp, Instagram, LinkedIn, iMessage…) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Kaya Mahler">
+  <meta property="og:title" content="Kaya Mahler — Graphisme — Lausanne">
+  <meta property="og:description" content="Portfolio de Kaya Mahler, graphiste à Lausanne : affiches, éditions, typographie et photographie.">
+  <meta property="og:locale" content="fr_CH">
+  <meta property="og:url" content="https://www.exemple.ch/">
+  <meta property="og:image" content="https://www.exemple.ch/images/accueil.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Petite icône de l'onglet : un « k » blanc sur le noir du site. -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23111'/%3E%3Ctext x='32' y='46' font-family='Georgia,serif' font-size='44' text-anchor='middle' fill='%23fff'%3Ek%3C/text%3E%3C/svg%3E">
+
+  <!-- Fiche « personne » pour Google (données structurées). -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Kaya Mahler",
+    "jobTitle": "Graphiste",
+    "url": "https://www.exemple.ch/",
+    "address": { "@type": "PostalAddress", "addressLocality": "Lausanne", "addressCountry": "CH" },
+    "knowsAbout": ["Graphisme", "Affiche", "Typographie", "Photographie", "Édition"]
+  }
+  </script>
+
+  <!-- Polices chargées en priorité : le titre « kaya » s'affiche plus vite. -->
+  <link rel="preload" href="fonts/Africa-Rainfall.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/Alaska-Regular.woff2" as="font" type="font/woff2" crossorigin>
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<!-- Titre principal de la page, lu par Google et les lecteurs d'écran (invisible à
+     l'écran : le mot « kaya » est dessiné dans un canvas). -->
+<h1 class="sr-only">Kaya Mahler — <span data-i18n="tagline">Graphisme — Lausanne</span></h1>
+
+<!-- Voile du noir du site, utilisé pour le retour doux à l'accueil (flèche ▴). -->
+<div id="veil" class="veil" aria-hidden="true"></div>
 
 <!-- Curseur personnalisé : rond déplacé par script.js (taille : --cursor-size dans style.css) -->
 <div id="cursor" aria-hidden="true"></div>
@@ -40,12 +91,6 @@
   <button type="button" id="lightbox-next" class="lightbox-arrow next" aria-label="Suivant">&gt;</button>
   <div id="lightbox-content" class="lightbox-content"></div>
 </div>
-
-<!-- ============ « ? » EN MOUVEMENT ============
-     Le « ? » (police Africa) flotte en bas à droite tant qu'un projet est à l'écran
-     (il penche avec la vitesse du défilement et fait une pirouette à chaque
-     nouveau projet). Un clic mène au texte du projet visible. -->
-<button type="button" id="qmark" class="qmark" aria-label="Info"><span>?</span></button>
 
 <!-- Zone de défilement. Page 1 et dernière page = un écran chacune ;
      les projets (entre les deux) défilent librement, en douceur. -->
@@ -81,7 +126,9 @@
 
   <!-- ============ PAGE 2 : « QUI SUIS-JE » ============
        L'image « Qui suis-je » de la langue en cours (CONFIG.aboutImages), entière,
-       en couleurs INVERSÉES (fond noir ; réglage : --about-invert dans style.css). Elle se pose en douceur pendant qu'on fait défiler.
+       en couleurs INVERSÉES, sur le même noir que le reste du site (--site-bg ;
+       réglages : --about-… dans style.css). Elle se pose en douceur pendant qu'on fait défiler.
+       Sur téléphone, la page prend juste la hauteur de l'image (pas de grand vide).
        L'id "about-page" ne doit pas être changé (il sert au script). -->
   <section class="page about-page" id="about-page" aria-label="Qui suis-je">
     <img class="about-page-img" id="about-page-img" alt="" hidden>
@@ -96,7 +143,8 @@
        • Fond noir.
        • « Let's talk! » au CENTRE de la page (lettres mobiles) ; un clic ou un
          toucher dessus ouvre la messagerie (e-mail).
-       • En bas : ville (gauche) et e-mail (droite), comme sur la page 1.
+       • En bas : ville (gauche) et e-mail (droite), comme sur la page 1, et au
+         centre une flèche ▴ qui remonte à l'accueil.
        L'id "contact" ne doit pas être changé (il sert au script). -->
   <section class="page footer" id="contact">
 
@@ -110,9 +158,20 @@
 
     <p class="contact-left" data-i18n="contactCity"></p>
     <address class="contact-right"><a class="mail" id="footer-email" href="#" aria-label="E-mail"></a></address>
+
+    <!-- Flèche ▴ (même style que le ▾ de la page 1) : un clic remonte à l'accueil. -->
+    <button type="button" class="scroll-cue scroll-top" id="scroll-top" aria-label="Retour à l'accueil">▴</button>
   </section>
 
 </main>
+
+<!-- Sans JavaScript (rare, ou certains robots) : l'essentiel reste lisible. -->
+<noscript>
+  <div class="noscript">
+    <p>Kaya Mahler — graphisme, Lausanne (Suisse).</p>
+    <p>Projets : Agenda ERACOM · Portes ouvertes ERACOM · NIFFF · Typo 2026 · Vidy flyer 2024 · Affiche 2024.</p>
+  </div>
+</noscript>
 
 <script src="script.js"></script>
 </body>

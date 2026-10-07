@@ -20,13 +20,13 @@ images/        toutes les images et la vidéo
 | Titre et texte d'un projet               | script.js  | `CONFIG.i18n.fr.projects` (et en / es / it)          |
 | Ville, « Qui suis-je », « Let's talk »   | script.js  | `CONFIG.i18n.fr` (et en / es / it)                   |
 | Les images « Qui suis-je »               | script.js  | `CONFIG.aboutImages` (une par langue)           |
-| Couleurs inversées de « Qui suis-je »    | style.css  | `--about-invert` (1 = inversées, 0 = d'origine) |
+| Couleurs inversées de « Qui suis-je »    | style.css  | `--about-invert`, `--about-bg`, `--about-blend` (voir le commentaire en section 1) |
+| Le noir du site (partout)                | style.css  | `--site-bg`                                     |
 | Ajouter une langue                       | script.js + index.html | copier une rubrique de `CONFIG.i18n` + un bouton dans `.lang` |
 | Temps de lecture du texte d'un projet    | script.js  | `CONFIG.horizontal.textHold`                    |
 | Images des projets (hauteur, écart)      | style.css  | `--slide-h`, `--slide-max-w`, `--slide-gap`     |
 | Textes des projets (taille, largeur, gris) | style.css | `--title-size`, `--desc-size`, `--intro-w`, `--text-w`, `--word-dim` |
 | Douceur du défilement                    | script.js  | `CONFIG.smoothScroll` (`lerp`, `magnet`…)       |
-| Mouvement du « ? »                       | script.js  | `CONFIG.questionMark` ; taille : `--q-size` (style.css) |
 | Mouvement des lettres                    | script.js  | `CONFIG.letterPhysics`                          |
 | Couleurs du site                         | style.css  | section 1, `--ink`, `--paper`…                  |
 | Couleurs de la dernière page             | style.css  | `--color-footer-bg` (fond, noir) et `--color-footer-text` (textes + « Let's talk », blanc) |
@@ -34,6 +34,8 @@ images/        toutes les images et la vidéo
 | Taille du mot « kaya »                   | style.css  | `--kaya-size`, `--kaya-width`                   |
 | Taille de « Let's talk » (au centre)     | style.css  | `--talk-w` (largeur max), `--talk-h` (hauteur max) |
 | Message « Adresse copiée »               | script.js  | `CONFIG.i18n.<langue>.mailCopied`               |
+| Nom du site, titre Google, description  | script.js  | `CONFIG.siteName`, `CONFIG.i18n.<langue>.tagline` et `metaDescription` |
+| Adresse du site (partage, Google)        | index.html | remplacer `https://www.exemple.ch/` (3 fois) et activer la ligne `canonical` |
 | Espacement des lettres de « Let's talk » | style.css  | `--talk-tracking` (positif = plus espacé, négatif = plus serré) |
 | Marges autour de l'écran                 | style.css  | `--edge-x`, `--edge-y`                          |
 | Taille du rond du curseur                | style.css  | `--cursor-size`                                 |
@@ -65,7 +67,9 @@ Ouvre de préférence le site **via un petit serveur local**, pas en double-cliq
 Exemple : dans le dossier du site, lance `python3 -m http.server` puis ouvre `http://localhost:8000`.
 Dans VS Code, l'extension « Live Server » fait la même chose.
 
-Avant la mise en ligne, mets `CONFIG.showMissingImages` sur `false`.
+Avant la mise en ligne :
+- mets `CONFIG.showMissingImages` sur `false` ;
+- dans `index.html`, remplace `https://www.exemple.ch/` (3 fois) par l'adresse réelle du site et enlève les `<!-- -->` autour de la ligne `canonical` (sinon l'aperçu de partage n'aura pas d'image).
 
 
 ## Version 2 — notes
@@ -166,3 +170,31 @@ Avant la mise en ligne, mets `CONFIG.showMissingImages` sur `false`.
 ## Version 11 — notes
 
 - **« Qui suis-je » en couleurs inversées** : sur la page 2 et en plein écran (clic sur « kaya »), l'image est inversée, et son fond blanc devient noir avec elle. Pour revenir aux couleurs d'origine : `--about-invert: 0;` (style.css, section 1).
+
+
+## Version 12 — notes
+
+- **« ? » supprimé** (bouton, styles, réglages `CONFIG.questionMark` et `--q-size`).
+- **Un seul noir pour tout le site** : `--site-bg` (style.css, section 1), utilisé par la page 1, « Qui suis-je », les projets et la dernière page.
+- **« Qui suis-je » inversée sur le noir du site** : les parties noires de l'image inversée prennent exactement `--site-bg` (mode de fusion « lighten »), sans rectangle plus noir autour. Réglages : `--about-invert`, `--about-bg`, `--about-blend`.
+- **Téléphone — « Qui suis-je »** : la page prend juste la hauteur de l'image ; le premier projet arrive juste en dessous, sans grand vide.
+- **Téléphone — titres des projets** : jamais de césure, les mots restent entiers ; si un mot est trop long, la taille du titre diminue juste assez (`fitTitle`, script.js). Le titre est centré en hauteur, aligné avec les images.
+- **Téléphone — glisser sur le côté** : dans un projet, glisser le doigt vers le haut OU sur le côté fait défiler (vers la gauche = on avance, vers la droite = on revient), avec un élan quand on lâche (`initTouchSwipe`).
+- **Dernière page — flèche ▴** : en bas au centre, même style que le ▾ de la page 1 ; un clic remonte en douceur à l'accueil.
+
+
+## Version 13 — notes
+
+- **Retour à l'accueil doux et direct** (flèche ▴) : un voile du noir du site se pose, le site saute d'un coup en haut (on ne voit plus défiler tous les projets), puis le voile se lève pendant que la page 1 apparaît (léger zoom de l'image d'accueil, « kaya » qui remonte). Environ une seconde en tout. Fonction `goHome` (script.js), styles `.veil` (style.css, section 13).
+- **Référencement (SEO)** :
+  - titre de l'onglet et description dans la langue choisie (`CONFIG.siteName`, `tagline`, `metaDescription`) ;
+  - titre principal `h1` invisible à l'écran mais lu par Google (le mot « kaya » est un dessin) ;
+  - aperçu de partage (Open Graph : titre, description, image `images/accueil.jpg`) ;
+  - fiche « personne » pour Google (données structurées : nom, métier, Lausanne) ;
+  - textes alternatifs de toutes les images (« Titre du projet — Kaya Mahler (2/4) », et pour « Qui suis-je ») ;
+  - icône d'onglet, couleur du navigateur sur téléphone, polices chargées en priorité, texte de secours sans JavaScript.
+- **Corrections après vérification complète du code** :
+  - les titres et bandes des projets sont remesurés une fois les polices chargées (avant, les tailles pouvaient être légèrement fausses) ;
+  - téléphone : la page « Qui suis-je » ne retient plus le défilement à l'entrée du premier projet ;
+  - commentaires périmés corrigés (« ? », numéros de pages, position de « Let's talk »).
+- **Testé** : ordinateur, tablette, téléphone, téléphone couché, mode « mouvements réduits » ; défilement complet aller-retour, changement de langue, « Qui suis-je » en plein écran, image agrandie, redimensionnement de la fenêtre. Aucune erreur dans la console.
