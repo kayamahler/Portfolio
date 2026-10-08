@@ -47,7 +47,7 @@ const PROJECT_IMAGES = [
   // ---- Projet 2 ----
   [
     "images/projet2-1.webp",
-    "images/projet2-2.webp",
+    "images/projet2-2.jpg",
     "images/projet2-3.png",
     "images/projet2-4.png",
     
