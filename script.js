@@ -93,7 +93,7 @@ const CONFIG = {
   // Elle n'existe jamais en clair dans la page : le script l'assemble quand
   // on la touche ou la clique. Les robots de spam qui lisent le code source
   // n'y trouvent donc aucune adresse.
-  contactEmail: { user: "kayamahler", domain: "eduvaud.ch" },
+  contactEmail: { user: "kaya.mahler", domain: "eduvaud.ch" },
 
   // ---- Nom affiché dans l'onglet, sur Google et dans les textes alternatifs ----
   siteName: "Kaya Mahler",
