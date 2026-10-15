@@ -162,7 +162,7 @@ const CONFIG = {
       // Un { title, text } par page projet, dans le même ordre que PROJECT_IMAGES.
       projects: [
         { title: "AGENDA ERACOM",
-          text: "Projet réalisé dans un cadre scolaire\nAgenda de l'ERACOM 2026-2027\n\nConception réalisée en collaboration avec Gabriel Perreira.\n\nLe mandat demandait de créer un agenda fonctionnel et intéressant pour les élèves de l'ERACOM. Notre ambition a été de créer un objet qui réunisse les filières de l'école, en mettant en valeur la matière et les élèves au cœur de l'action. Le projet s'articule autour d'une série de 50 photographies qui viennent rythmer l'année en racontant une histoire, celle de la vie au sein de l'établissement." },
+          text: "Projet réalisé dans un cadre scolaire\nConception réalisée en collaboration avec Gabriel Perreira.\n\nLe mandat demandait de créer un agenda fonctionnel et intéressant pour les élèves de l'ERACOM. Notre ambition a été de créer un objet qui réunisse les filières de l'école, en mettant en valeur la matière et les élèves au cœur de l'action. Le projet s'articule autour d'une série de 50 photographies qui viennent rythmer l'année en racontant une histoire, celle de la vie au sein de l'établissement." },
         { title: "PORTES OUVERTES",
           text: "Projet réalisé dans un cadre scolaire\nLe mandat demandait de créer une affiche annonçant les futures portes ouvertes de l'établissement avec comme thème « La Suisse est géniale ». Les mandants proposaient différents axes ; j'ai choisi l'absurde.\n\nLe concept repose sur un détournement d'objets : un économe, un carac et de la crème à café." },
         { title: "NIFFF",
@@ -172,7 +172,7 @@ const CONFIG = {
         { title: "FLYER 2024",
           text: "Projet réalisé dans un cadre scolaire\nLe mandat demandait de créer un dépliant pour l'une des œuvres présentées au Théâtre de Vidy, en conservant l'identité du théâtre. Le dépliant devait transmettre la sensation de la pièce." },
         { title: "AFFICHE 2024",
-          text: "Projet réalisé dans un cadre scolaire\nWorkshop avec Guillaume Besson.\n\nTirage au sort d'une recette. Création d'un visuel. Contrainte de deux couleurs." },
+          text: "Projet réalisé dans un cadre scolaire\n\nTirage au sort d'une recette. Création d'un visuel. Contrainte de deux couleurs." },
       ],
     },
     en: {
@@ -188,9 +188,9 @@ const CONFIG = {
       mailCopied: "Address copied",
       projects: [
         { title: "ERACOM AGENDA",
-          text: "Project carried out as part of my studies\nERACOM Agenda 2026-2027\n\nDesigned in collaboration with Gabriel Perreira.\nLayout: Gabriel Perreira.\nPhotography: Kaya Mahler.\n\nThe brief was to create a functional and engaging planner for ERACOM students. Our ambition was to make an object that brings together the school's departments, highlighting the materials and the students at the heart of the action. The project is built around a series of 50 photographs that punctuate the year while telling a story: the life within the school. We wanted to shine a light on what goes on behind the scenes of the different programmes." },
+          text: "Project carried out as part of my studies\nDesigned in collaboration with Gabriel Perreira.\n\nThe brief was to create a functional and engaging planner for ERACOM students. Our ambition was to make an object that brings together the school's departments, highlighting the materials and the students at the heart of the action. The project is built around a series of 50 photographs that punctuate the year while telling a story: the life within the school." },
         { title: "OPEN DAYS",
-          text: "Project carried out as part of my studies\nERACOM Open Days 2026-2027\n\nThe brief was to create a poster announcing the school's upcoming open days, on the theme “Switzerland is great”. The clients suggested several approaches; I chose the absurd.\n\nThe concept relies on diverting everyday objects: a peeler, a carac (a small Swiss chocolate tartlet) and a coffee creamer." },
+          text: "Project carried out as part of my studies\nThe brief was to create a poster announcing the school's upcoming open days, on the theme “Switzerland is great”. The clients suggested several approaches; I chose the absurd.\n\nThe concept relies on diverting everyday objects: a peeler, a carac (a small Swiss chocolate tartlet) and a coffee creamer." },
         { title: "NIFFF",
           text: "The brief was to create a poster for the 25th edition of the Neuchâtel International Fantastic Film Festival, respecting its visual identity.\n\nI chose to work with polymer clay to make human organs, then staged them with parts salvaged from electronic waste. The whole was photographed to create a visual that merges human and machine." },
         { title: "TYPO 2026",
@@ -214,9 +214,9 @@ const CONFIG = {
       mailCopied: "Dirección copiada",
       projects: [
         { title: "AGENDA ERACOM",
-          text: "Proyecto realizado en un contexto escolar\nAgenda de la ERACOM 2026-2027\n\nDiseño realizado en colaboración con Gabriel Perreira.\nMaquetación: Gabriel Perreira.\nFotografía: Kaya Mahler.\n\nEl encargo consistía en crear una agenda funcional e interesante para los alumnos de la ERACOM. Nuestra ambición fue crear un objeto que reuniera las distintas especialidades de la escuela, poniendo en valor la materia y a los alumnos en el centro de la acción. El proyecto se articula en torno a una serie de 50 fotografías que marcan el ritmo del año contando una historia: la de la vida dentro del centro. Quisimos dar a conocer los entresijos de las diferentes formaciones." },
+          text: "Proyecto realizado en un contexto escolar\nDiseño realizado en colaboración con Gabriel Perreira.\n\nEl encargo consistía en crear una agenda funcional e interesante para los alumnos de la ERACOM. Nuestra ambición fue crear un objeto que reuniera las distintas especialidades de la escuela, poniendo en valor la materia y a los alumnos en el centro de la acción. El proyecto se articula en torno a una serie de 50 fotografías que marcan el ritmo del año contando una historia: la de la vida dentro del centro." },
         { title: "PUERTAS ABIERTAS",
-          text: "Proyecto realizado en un contexto escolar\nPuertas abiertas de la ERACOM 2026-2027\n\nEl encargo consistía en crear un cartel que anunciara las próximas jornadas de puertas abiertas del centro, con el tema «Suiza es genial». Los clientes propusieron distintos enfoques; elegí lo absurdo.\n\nEl concepto se basa en el desvío de objetos: un pelapatatas, un carac (pastelito suizo de chocolate) y una nata de café." },
+          text: "Proyecto realizado en un contexto escolar\nEl encargo consistía en crear un cartel que anunciara las próximas jornadas de puertas abiertas del centro, con el tema «Suiza es genial». Los clientes propusieron distintos enfoques; elegí lo absurdo.\n\nEl concepto se basa en el desvío de objetos: un pelapatatas, un carac (pastelito suizo de chocolate) y una nata de café." },
         { title: "NIFFF",
           text: "El encargo consistía en crear un cartel para la 25.ª edición del Neuchâtel International Fantastic Film Festival, respetando su identidad.\n\nDecidí trabajar con arcilla polimérica para crear órganos humanos y luego escenificarlos con piezas recuperadas de residuos electrónicos. El conjunto se fotografió para crear un visual que integra al ser humano y la máquina." },
         { title: "TYPO 2026",
@@ -240,11 +240,11 @@ const CONFIG = {
       mailCopied: "Indirizzo copiato",
       projects: [
         { title: "AGENDA ERACOM",
-          text: "Progetto realizzato in ambito scolastico\nAgenda dell'ERACOM 2026-2027\n\nIdeazione realizzata in collaborazione con Gabriel Perreira.\nImpaginazione: Gabriel Perreira.\nFotografia: Kaya Mahler.\n\nL'incarico richiedeva di creare un'agenda funzionale e interessante per gli studenti dell'ERACOM. La nostra ambizione è stata creare un oggetto che riunisse i diversi indirizzi della scuola, mettendo in risalto la materia e gli studenti al centro dell'azione. Il progetto si articola attorno a una serie di 50 fotografie che scandiscono l'anno raccontando una storia, quella della vita all'interno dell'istituto. Volevamo mettere in luce il dietro le quinte delle diverse formazioni." },
+          text: "Progetto realizzato in ambito scolastico\n\nIdeazione realizzata in collaborazione con Gabriel Perreira.\n\nL'incarico richiedeva di creare un'agenda funzionale e interessante per gli studenti dell'ERACOM. La nostra ambizione è stata creare un oggetto che riunisse i diversi indirizzi della scuola, mettendo in risalto la materia e gli studenti al centro dell'azione. Il progetto si articola attorno a una serie di 50 fotografie che scandiscono l'anno raccontando una storia, quella della vita all'interno dell'istituto." },
         { title: "PORTE APERTE",
-          text: "Progetto realizzato in ambito scolastico\nPorte aperte dell'ERACOM 2026-2027\n\nL'incarico richiedeva di creare un manifesto per annunciare le prossime porte aperte dell'istituto, sul tema « La Svizzera è geniale ». I committenti proponevano diversi approcci; ho scelto l'assurdo.\n\nIl concetto si basa sul riutilizzo improprio di oggetti: un pelapatate, un carac (dolcetto svizzero al cioccolato) e una panna da caffè." },
+          text: "Progetto realizzato in ambito scolastico\n\nL'incarico richiedeva di creare un manifesto per annunciare le prossime porte aperte dell'istituto, sul tema « La Svizzera è geniale ». I committenti proponevano diversi approcci; ho scelto l'assurdo.\n\nIl concetto si basa sul riutilizzo improprio di oggetti: un pelapatate, un carac (dolcetto svizzero al cioccolato) e una panna da caffè." },
         { title: "NIFFF",
-          text: "L'incarico richiedeva di creare un manifesto per la 25ª edizione del Neuchâtel International Fantastic Film Festival, nel rispetto della loro identità.\n\nHo scelto di lavorare con la pasta polimerica per realizzare organi umani, per poi metterli in scena con parti recuperate da rifiuti elettronici. L'insieme è stato fotografato per creare un visual che integra l'umano e la macchina." },
+          text: "Progetto realizzato in ambito scolastico\n\nL'incarico richiedeva di creare un manifesto per la 25ª edizione del Neuchâtel International Fantastic Film Festival, nel rispetto della loro identità.\n\nHo scelto di lavorare con la pasta polimerica per realizzare organi umani, per poi metterli in scena con parti recuperate da rifiuti elettronici. L'insieme è stato fotografato per creare un visual che integra l'umano e la macchina." },
         { title: "TYPO 2026",
           text: "Carattere tipografico iniziato in ambito scolastico e sviluppato a titolo personale." },
         { title: "PIEGHEVOLE VIDY 2024",
