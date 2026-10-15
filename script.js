@@ -55,7 +55,7 @@ const PROJECT_IMAGES = [
   // ---- Projet 3 ----
   [
     "images/projet3-1.jpg",
-    "images/projet3-2.jpg",
+    "images/projet3-2.png",
     "images/projet3-3.jpg",
     "images/projet3-4.jpg",
     "images/projet3-5.jpg",
@@ -162,15 +162,15 @@ const CONFIG = {
       // Un { title, text } par page projet, dans le même ordre que PROJECT_IMAGES.
       projects: [
         { title: "AGENDA ERACOM",
-          text: "Projet réalisé dans un cadre scolaire\nAgenda de l'ERACOM 2026-2027\n\nConception réalisée en collaboration avec Gabriel Perreira.\nRéalisation de la mise en page : Gabriel Perreira.\nRéalisation photographie : Kaya Mahler.\n\nLe mandat demandait de créer un agenda fonctionnel et intéressant pour les élèves de l'ERACOM. Notre ambition a été de créer un objet qui réunisse les filières de l'école, en mettant en valeur la matière et les élèves au cœur de l'action. Le projet s'articule autour d'une série de 50 photographies qui viennent rythmer l'année en racontant une histoire, celle de la vie au sein de l'établissement. Nous voulions mettre en lumière les coulisses des différentes formations." },
+          text: "Projet réalisé dans un cadre scolaire\nAgenda de l'ERACOM 2026-2027\n\nConception réalisée en collaboration avec Gabriel Perreira.\n\nLe mandat demandait de créer un agenda fonctionnel et intéressant pour les élèves de l'ERACOM. Notre ambition a été de créer un objet qui réunisse les filières de l'école, en mettant en valeur la matière et les élèves au cœur de l'action. Le projet s'articule autour d'une série de 50 photographies qui viennent rythmer l'année en racontant une histoire, celle de la vie au sein de l'établissement." },
         { title: "PORTES OUVERTES",
-          text: "Projet réalisé dans un cadre scolaire\nPortes ouvertes de l'ERACOM 2026-2027\n\nLe mandat demandait de créer une affiche annonçant les futures portes ouvertes de l'établissement avec comme thème « La Suisse est géniale ». Les mandants proposaient différents axes ; j'ai choisi l'absurde.\n\nLe concept repose sur un détournement d'objets : un économe, un carac et de la crème à café." },
+          text: "Projet réalisé dans un cadre scolaire\nLe mandat demandait de créer une affiche annonçant les futures portes ouvertes de l'établissement avec comme thème « La Suisse est géniale ». Les mandants proposaient différents axes ; j'ai choisi l'absurde.\n\nLe concept repose sur un détournement d'objets : un économe, un carac et de la crème à café." },
         { title: "NIFFF",
-          text: "Le mandat demandait de créer une affiche pour la 25ᵉ édition du Neuchâtel International Fantastic Film Festival, en respectant leur identité.\n\nJ'ai fait le choix de travailler avec de la pâte polymère pour concevoir des organes humains, puis de les mettre en scène avec des parties récupérées de déchets électroniques. L'ensemble a été photographié afin de créer un visuel qui intègre l'humain et la machine." },
+          text: "Projet réalisé dans un cadre scolaire\nLe mandat demandait de créer une affiche pour la 25ᵉ édition du Neuchâtel International Fantastic Film Festival, en respectant leur identité.\n\nJ'ai fait le choix de travailler avec de la pâte polymère pour concevoir des organes humains, puis de les mettre en scène avec des parties récupérées de déchets électroniques. L'ensemble a été photographié afin de créer un visuel qui intègre l'humain et la machine." },
         { title: "TYPO 2026",
           text: "Typographie commencée dans un cadre scolaire et développée à titre personnel." },
-        { title: "VIDY FLYER 2024",
-          text: "Le mandat demandait de créer un dépliant pour l'une des œuvres présentées au Théâtre de Vidy, en conservant l'identité du théâtre. Le dépliant devait transmettre la sensation de la pièce." },
+        { title: "FLYER 2024",
+          text: "Projet réalisé dans un cadre scolaire\nLe mandat demandait de créer un dépliant pour l'une des œuvres présentées au Théâtre de Vidy, en conservant l'identité du théâtre. Le dépliant devait transmettre la sensation de la pièce." },
         { title: "AFFICHE 2024",
           text: "Projet réalisé dans un cadre scolaire\nWorkshop avec Guillaume Besson.\n\nTirage au sort d'une recette. Création d'un visuel. Contrainte de deux couleurs." },
       ],
@@ -179,7 +179,7 @@ const CONFIG = {
       gyroText: "Allow motion sensors to animate the letters?",
       gyroAllow: "Allow",
       gyroDecline: "Decline",
-      aboutLabel: "Who am I",
+      aboutLabel: "Who am I ?",
       aboutClose: "Close",
       contactCity: "Lausanne, Switzerland",
       tagline: "Graphic design — Lausanne",
