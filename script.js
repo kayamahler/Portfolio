@@ -231,7 +231,7 @@ const CONFIG = {
       gyroText: "Consentire i sensori di movimento per animare le lettere?",
       gyroAllow: "Consenti",
       gyroDecline: "Rifiuta",
-      aboutLabel: "Chi sono",
+      aboutLabel: "Chi sono ?",
       aboutClose: "Chiudi",
       contactCity: "Losanna, Svizzera",
       tagline: "Graphic design — Losanna",
