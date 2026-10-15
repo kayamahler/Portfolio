@@ -220,7 +220,7 @@ const CONFIG = {
         { title: "NIFFF",
           text: "Proyecto realizado en un contexto escolar.\n\nEl encargo consistía en crear un cartel para la 25.ª edición del Neuchâtel International Fantastic Film Festival, respetando su identidad.\n\nDecidí trabajar con arcilla polimérica para crear órganos humanos y luego escenificarlos con piezas recuperadas de residuos electrónicos. El conjunto se fotografió para crear un visual que integra al ser humano y la máquina." },
         { title: "TYPO 2026",
-          text: "Proyecto realizado en un contexto escolar.\n\nEsta fuente está diseñada a partir de un trazo caligráfico manual que define su estructura y contraste. Luego, las formas fueron rediseñadas y dotadas de remates definidos." },
+          text: "Proyecto realizado en un contexto escolar.\n\nEsta tipografía está diseñada a partir de un trazo caligráfico manual que define su estructura y contraste. Luego, las formas fueron rediseñadas y dotadas de remates definidos." },
         { title: "FOLLETO VIDY 2024",
           text: "Proyecto realizado en un contexto escolar.\n\nEl encargo consistía en crear un folleto para una de las obras presentadas en el Théâtre de Vidy, conservando la identidad del teatro. El folleto debía transmitir la sensación de la obra." },
         { title: "WORKSHOP 2024",
