@@ -151,13 +151,13 @@ const CONFIG = {
       gyroText: "Autoriser le capteur de mouvement pour animer les lettres ?",
       gyroAllow: "Autoriser",
       gyroDecline: "Refuser",
-      aboutLabel: "Qui suis-je",
+      aboutLabel: "Qui suis-je?",
       aboutClose: "Fermer",
       contactCity: "Lausanne, Suisse",
       // Référencement (Google, partage sur les réseaux) : sous-titre de l'onglet et description.
       tagline: "Graphisme — Lausanne",
       metaDescription: "Portfolio de Kaya Mahler, graphiste à Lausanne : affiches, éditions, typographie et photographie.",
-      letsTalkTitle: "Let's talk!", // titre de la dernière page
+      letsTalkTitle: "Parlons!", // titre de la dernière page
       mailCopied: "Adresse copiée", // petit message après un clic sur l'e-mail
       // Un { title, text } par page projet, dans le même ordre que PROJECT_IMAGES.
       projects: [
@@ -170,7 +170,7 @@ const CONFIG = {
         { title: "TYPO 2026",
           text: "Projet réalisé dans un cadre scolaire.\n\nCette police est dessinée à partir d'un tracé calligraphique manuel qui en fixe la structure et le contraste. Les formes ont ensuite été redessinées et dotées d'empattements." },
         { title: "FLYER 2024",
-          text: "Projet réalisé dans un cadre scolaire\nLe mandat demandait de créer un dépliant pour l'une des œuvres présentées au Théâtre de Vidy, en conservant l'identité du théâtre. Le dépliant devait transmettre la sensation de la pièce." },
+          text: "Projet réalisé dans un cadre scolaire\n\nLe mandat demandait de créer un dépliant pour l'une des œuvres présentées au Théâtre de Vidy, en conservant l'identité du théâtre. Le dépliant devait transmettre la sensation de la pièce." },
         { title: "AFFICHE 2024",
           text: "Projet réalisé dans un cadre scolaire\n\nTirage au sort d'une recette. Création d'un visuel. Contrainte de deux couleurs." },
       ],
